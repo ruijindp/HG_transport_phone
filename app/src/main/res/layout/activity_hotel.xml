@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:focusable="false"
+    android:focusableInTouchMode="true"
+    android:orientation="vertical">
+
+    <ImageView
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="70dp"
+        android:contentDescription="@string/app_name"
+        android:src="@mipmap/ic_hotel"/>
+
+    <LinearLayout
+        android:id="@+id/lnHotel"
+        android:layout_width="188dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="20dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:gravity="center">
+
+        <TextView
+            android:id="@+id/tvHotel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/select_hotel"
+            android:textColor="@color/black_2d"
+            android:textSize="12sp"
+            android:textStyle="bold"/>
+
+        <ImageView
+            android:layout_width="12dp"
+            android:layout_height="12dp"
+            android:contentDescription="@string/app_name"
+            android:layout_marginStart="5dp"
+            android:src="@mipmap/ic_indicator"
+            android:tint="@color/black_2d"/>
+    </LinearLayout>
+
+
+    <EditText
+        android:id="@+id/etHotel"
+        android:layout_width="188dp"
+        android:layout_height="40dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="40dp"
+        android:background="@drawable/shape_bg_hotel"
+        android:gravity="center"
+        android:hint="@string/hint_hotel"
+        android:inputType="text"
+        android:textColor="@color/black_2d"
+        android:textSize="12sp"
+        android:textStyle="bold"/>
+
+    <TextView
+        android:id="@+id/tvConfirm"
+        style="@style/btn_style"
+        android:layout_width="188dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="30dp"
+        android:text="@string/sure"/>
+
+
+    <android.support.v7.widget.AppCompatSpinner
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+</LinearLayout>

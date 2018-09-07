@@ -1,0 +1,74 @@
+<resources>
+    <string name="app_name">运输端</string>
+
+    <string name="login">登录</string>
+    <string name="history_order">历史订单</string>
+    <string name="printer">打印</string>
+    <string name="send_linen">送净布草</string>
+    <string name="pick_linen">收脏布草</string>
+    <string name="pollution">严重污染</string>
+    <string name="rewash_linen">布草反洗</string>
+    <string name="entry_permission">*录入权限</string>
+    <string name="clean_cloth">CLEAN CLOTH</string>
+    <string name="dirty_cloth">DIRTY CLOTH</string>
+    <string name="printed_note">PRINTED NOTE</string>
+    <string name="printed_cloth">PRINTED CLOTH</string>
+    <string name="dirty_count">收脏布草%s件</string>
+    <string name="commit_order">提交订单</string>
+    <string name="order">订单</string>
+    <string name="printer_order">打印订单</string>
+    <string name="linen_trend">布草动向</string>
+    <string name="linen_trend_">布草动向：</string>
+    <string name="category_name">分级名称</string>
+    <string name="category_name_">分级名称：一楼布草间</string>
+    <string name="count">数量</string>
+    <string name="order_info">订单信息</string>
+    <string name="order_num">订单号：</string>
+    <string name="order_time">下单时间：</string>
+    <string name="linen_list">布草清单</string>
+    <string name="linen_name">布草名称</string>
+    <string name="linen_count">布草数量</string>
+    <string name="linen_price">布草价格</string>
+    <string name="total">合计</string>
+    <string name="yuan">元</string>
+    <string name="total_linen">共%s套布草</string>
+    <string name="order_detail">订单详情</string>
+    <string name="select_hotel">选择酒店名称</string>
+    <string name="sure">确定</string>
+    <string name="principal">负责人：</string>
+    <string name="confirm_order">确认订单</string>
+    <string name="commit_success">订单提交成功</string>
+    <string name="commit_success_">提交成功</string>
+    <string name="commit_count">收脏订单共提交%s件</string>
+    <string name="see_order">查看订单</string>
+    <string name="back_main">返回首页</string>
+    <string name="loading">加载中&#8230;</string>
+    <string name="notice">温馨提示</string>
+    <string name="jump">秒后将为您自动跳转</string>
+    <string name="maturity">抱歉，您的布草录入权限已于\n%s到期，请续费！</string>
+    <string name="maturity_date">您的洗涤录入还有%s天到期，\n为了不影响使用请尽快续费</string>
+
+    <string name="digits_number">0123456789</string>
+    <string name="hint_number">输入数量</string>
+    <string name="hint_hotel">输入酒店名称</string>
+    <string name="hint_account">请输入账号</string>
+    <string name="hint_psw">请输入密码</string>
+
+    <string name="ble_device">蓝牙设备</string>
+    <string name="print">打印</string>
+    <string name="connect">连接打印机</string>
+    <string name="str_printer_conn_normal">打印机连接正常</string>
+    <string name="str_printer_out_of_paper">打印机缺纸</string>
+    <string name="str_printer_open_cover">打印机开盖</string>
+    <string name="str_printer_error">打印机出错</string>
+    <string name="none_paired">未配对</string>
+    <string name="scanning">扫描</string>
+    <string name="select_bluetooth_device">选择蓝牙设备</string>
+    <string name="none_bluetooth_device_found">没有找到蓝牙设备</string>
+
+    <string name="test_count">0</string>
+    <string name="test_category">一楼间布草</string>
+
+    <string name="toast_token_invalid">登录失效，请重新登录！</string>
+    <string name="toast_no_linen">还没有选择布草</string>
+</resources>

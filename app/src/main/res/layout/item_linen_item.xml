@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:baselineAligned="false"
+    android:focusable="false"
+    android:focusableInTouchMode="true"
+    android:orientation="horizontal"
+    android:paddingBottom="15dp"
+    android:paddingTop="15dp">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvLinenType"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/app_name"
+            android:textColor="@android:color/black"
+            android:textSize="13sp"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/tvLinenSize"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/app_name"
+            android:textColor="@color/gray_93"
+            android:textSize="11sp"
+            tools:ignore="SmallSp"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/ivMinus"
+            style="@style/ripper"
+            android:layout_width="31dp"
+            android:layout_height="31dp"
+            android:padding="6dp"
+            android:contentDescription="@string/app_name"
+            android:src="@mipmap/ic_minus"
+            android:visibility="invisible"/>
+
+        <EditText
+            android:id="@+id/etLinenCount"
+            android:layout_width="56dp"
+            android:layout_height="23dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp"
+            android:background="@drawable/shape_bg_linen_count"
+            android:digits="@string/digits_number"
+            android:gravity="center"
+            android:hint="@string/hint_number"
+            android:inputType="number"
+            android:textColor="@color/black_16"
+            android:textColorHint="@color/black_7d16"
+            android:textSize="12sp"/>
+
+        <ImageView
+            android:id="@+id/ivPlus"
+            style="@style/ripper"
+            android:layout_width="31dp"
+            android:layout_height="31dp"
+            android:padding="6dp"
+            android:contentDescription="@string/app_name"
+            android:src="@mipmap/ic_plus"
+            android:visibility="invisible"/>
+    </LinearLayout>
+</LinearLayout>

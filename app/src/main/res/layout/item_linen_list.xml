@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:paddingTop="8dp">
+
+    <TextView
+        android:id="@+id/tvLinenName"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1.5"
+        android:gravity="center"
+        android:lines="1"
+        android:ellipsize="end"
+        android:text="@string/linen_name"
+        android:textColor="@color/black_15"
+        android:textSize="12sp"/>
+
+    <TextView
+        android:id="@+id/tvLinenCount"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="@string/test_count"
+        android:textColor="@color/black_15"
+        android:textSize="12sp"/>
+</LinearLayout>

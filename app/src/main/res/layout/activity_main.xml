@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/view_title"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginEnd="15dp"
+            android:layout_marginStart="15dp"
+            android:paddingBottom="15dp">
+
+            <FrameLayout
+                android:id="@+id/lnOrder"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:paddingTop="10dp"
+                android:visibility="invisible">
+
+                <ImageView
+                    android:layout_width="11dp"
+                    android:layout_height="11dp"
+                    android:layout_gravity="center_vertical"
+                    android:contentDescription="@string/app_name"
+                    android:src="@mipmap/ic_time"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:text="@string/app_name"
+                    android:textColor="@color/gray_58"
+                    android:textSize="12sp"/>
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/tvPermission"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/entry_permission"
+                android:textColor="@color/gray_a338"
+                android:textSize="11sp"
+                android:visibility="invisible"
+                app:layout_constraintTop_toBottomOf="@id/lnOrder"
+                tools:ignore="SmallSp"/>
+
+            <ImageView
+                android:id="@+id/ivPrinter"
+                style="@style/ripper"
+                android:layout_width="59dp"
+                android:layout_height="59dp"
+                android:layout_marginEnd="10dp"
+                android:contentDescription="@string/app_name"
+                android:src="@mipmap/ic_printer"
+                app:layout_constraintEnd_toEndOf="parent"/>
+
+            <FrameLayout
+                android:id="@+id/flSendLinen"
+                style="@style/ripper"
+                android:layout_width="match_parent"
+                android:layout_height="101dp"
+                android:layout_marginTop="16dp"
+                app:layout_constraintTop_toBottomOf="@id/ivPrinter">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:contentDescription="@string/send_linen"
+                    android:scaleType="centerCrop"
+                    android:src="@mipmap/ic_send_linen"/>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center">
+
+                    <ImageView
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
+                        android:contentDescription="@string/app_name"
+                        android:src="@mipmap/ic_car"/>
+
+                    <FrameLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="10dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/send_linen"
+                            android:textColor="@android:color/white"
+                            android:textSize="15sp"
+                            android:textStyle="bold"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="bottom"
+                            android:text="@string/clean_cloth"
+                            android:textColor="@android:color/white"
+                            android:textSize="9sp"
+                            tools:ignore="SmallSp"/>
+                    </FrameLayout>
+                </LinearLayout>
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/flPickLinen"
+                style="@style/ripper"
+                android:layout_width="match_parent"
+                android:layout_height="101dp"
+                android:layout_marginTop="16dp"
+                app:layout_constraintTop_toBottomOf="@id/flSendLinen">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:contentDescription="@string/send_linen"
+                    android:scaleType="centerCrop"
+                    android:src="@mipmap/ic_pick_linen"/>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center">
+
+                    <ImageView
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
+                        android:contentDescription="@string/app_name"
+                        android:src="@mipmap/ic_recycling"/>
+
+                    <FrameLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="10dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/pick_linen"
+                            android:textColor="@android:color/white"
+                            android:textSize="15sp"
+                            android:textStyle="bold"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="bottom"
+                            android:text="@string/dirty_cloth"
+                            android:textColor="@android:color/white"
+                            android:textSize="9sp"
+                            tools:ignore="SmallSp"/>
+                    </FrameLayout>
+                </LinearLayout>
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/flPollution"
+                style="@style/ripper"
+                android:layout_width="match_parent"
+                android:layout_height="101dp"
+                android:layout_marginTop="16dp"
+                app:layout_constraintTop_toBottomOf="@id/flPickLinen">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:contentDescription="@string/send_linen"
+                    android:scaleType="centerCrop"
+                    android:src="@mipmap/ic_pollution"/>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center">
+
+                    <ImageView
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
+                        android:contentDescription="@string/app_name"
+                        android:src="@mipmap/ic_pollution_"/>
+
+                    <FrameLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="10dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/pollution"
+                            android:textColor="@android:color/white"
+                            android:textSize="15sp"
+                            android:textStyle="bold"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="bottom"
+                            android:text="@string/printed_note"
+                            android:textColor="@android:color/white"
+                            android:textSize="9sp"
+                            tools:ignore="SmallSp"/>
+                    </FrameLayout>
+                </LinearLayout>
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/flRewashLinen"
+                style="@style/ripper"
+                android:layout_width="match_parent"
+                android:layout_height="101dp"
+                android:layout_marginTop="16dp"
+                app:layout_constraintTop_toBottomOf="@id/flPollution">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:contentDescription="@string/send_linen"
+                    android:scaleType="centerCrop"
+                    android:src="@mipmap/ic_rewash_linen"/>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center">
+
+                    <ImageView
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
+                        android:contentDescription="@string/app_name"
+                        android:src="@mipmap/ic_rewash"/>
+
+                    <FrameLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="10dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/rewash_linen"
+                            android:textColor="@android:color/white"
+                            android:textSize="15sp"
+                            android:textStyle="bold"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="bottom"
+                            android:text="@string/printed_cloth"
+                            android:textColor="@android:color/white"
+                            android:textSize="9sp"
+                            tools:ignore="SmallSp"/>
+                    </FrameLayout>
+                </LinearLayout>
+            </FrameLayout>
+        </android.support.constraint.ConstraintLayout>
+    </ScrollView>
+
+</LinearLayout>
