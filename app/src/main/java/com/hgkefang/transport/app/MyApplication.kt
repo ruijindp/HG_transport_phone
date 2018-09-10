@@ -5,6 +5,7 @@ import android.app.Application
 import android.content.Context
 import com.blankj.utilcode.util.SPUtils
 import com.blankj.utilcode.util.Utils
+import com.hgkefang.transport.entity.RetData
 import kotlin.properties.Delegates
 
 class MyApplication : Application() {
@@ -14,6 +15,7 @@ class MyApplication : Application() {
         const val hotel_id = 7
         var name: String? = null
         var context: Context by Delegates.notNull()
+        var retData: RetData? = null
     }
 
     override fun onCreate() {

@@ -4,10 +4,10 @@
     <string name="login">登录</string>
     <string name="history_order">历史订单</string>
     <string name="printer">打印</string>
-    <string name="send_linen">送净布草</string>
-    <string name="pick_linen">收脏布草</string>
+    <string name="send_linen">送净货品</string>
+    <string name="pick_linen">收脏货品</string>
     <string name="pollution">严重污染</string>
-    <string name="rewash_linen">布草反洗</string>
+    <string name="rewash_linen">货品反洗</string>
     <string name="entry_permission">*录入权限</string>
     <string name="clean_cloth">CLEAN CLOTH</string>
     <string name="dirty_cloth">DIRTY CLOTH</string>

@@ -11,7 +11,7 @@ import com.hgkefang.transport.entity.RetData
 /**
  * Create by admin on 2018/9/4
  */
-class LinenAdapter(private val retData: List<RetData>) : RecyclerView.Adapter<LinenAdapter.ViewHolder>() {
+class LinenTypeAdapter(private val retData: List<RetData>) : RecyclerView.Adapter<LinenTypeAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_linen, parent, false))

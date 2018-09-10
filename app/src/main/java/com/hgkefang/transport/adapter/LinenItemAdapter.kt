@@ -4,7 +4,6 @@ import android.support.v7.widget.RecyclerView
 import android.text.Editable
 import android.text.TextUtils
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,10 +19,6 @@ import org.greenrobot.eventbus.EventBus
  * Create by admin on 2018/9/5
  */
 class LinenItemAdapter(private val son: List<Son>) : RecyclerView.Adapter<LinenItemAdapter.ViewHolder>() {
-
-    companion object {
-        val addResult = ArrayList<EvenBusEven>()
-    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_linen_item, parent, false))
@@ -63,13 +58,13 @@ class LinenItemAdapter(private val son: List<Son>) : RecyclerView.Adapter<LinenI
         override fun onClick(v: View?) {
             when (v?.id) {
                 R.id.ivMinus -> {
-                    if (TextUtils.isEmpty(holder.etLinenCount.text.toString()) || holder.etLinenCount.text.toString() == "0"){
+                    if (TextUtils.isEmpty(holder.etLinenCount.text.toString()) || holder.etLinenCount.text.toString() == "0") {
                         return
                     }
                     holder.etLinenCount.setText((holder.etLinenCount.text.toString().toInt() - 1).toString())
                 }
                 R.id.ivPlus -> {
-                    if (TextUtils.isEmpty(holder.etLinenCount.text.toString())){
+                    if (TextUtils.isEmpty(holder.etLinenCount.text.toString())) {
                         holder.etLinenCount.setText((0 + 1).toString())
                         return
                     }

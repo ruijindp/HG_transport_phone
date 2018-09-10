@@ -3,6 +3,7 @@ package com.hgkefang.transport
 import android.content.Intent
 import android.util.Log
 import android.view.View
+import com.blankj.utilcode.util.ToastUtils
 import com.bronze.kutil.httpPost
 import com.google.gson.Gson
 import com.hgkefang.transport.app.MyApplication
@@ -29,9 +30,6 @@ class HotelActivity : BaseActivity(), View.OnClickListener, NamedEntityPopup.Ent
 
     override fun initialize() {
         refreshData()
-
-
-
         lnHotel.setOnClickListener(this)
         tvConfirm.setOnClickListener {
             doLogin()
@@ -49,13 +47,11 @@ class HotelActivity : BaseActivity(), View.OnClickListener, NamedEntityPopup.Ent
         }
     }
 
-    var retData : RetData ?= null
-
     override fun selectStringAt(popup: NamedEntityPopup, index: Int) {
         when(popup.lastAnchor!!.id){
             R.id.lnHotel -> {
-                retData = results[index]
                 tvHotel.text = results[index].tradition_hotel_name
+                MyApplication.retData = results[index]
             }
         }
 
@@ -87,12 +83,12 @@ class HotelActivity : BaseActivity(), View.OnClickListener, NamedEntityPopup.Ent
     }
 
     private fun doLogin() {
-        if (retData == null){
+        if (MyApplication.retData == null){
             toast("还没有选择酒店")
             return
         }
         val intent = Intent(this, MainActivity::class.java)
-        intent.putExtra("retData", retData)
+//        intent.putExtra("retData", MyApplication.retData)
         startActivity(intent)
         finish()
     }

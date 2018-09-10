@@ -32,7 +32,7 @@ class DeviceConnFactoryManager private constructor(build: Build) {
      *
      * @return
      */
-    private val connMethod: CONN_METHOD?
+    private val connMethod: ConnectType?
 
     /**
      * 获取连接网口的IP
@@ -107,7 +107,7 @@ class DeviceConnFactoryManager private constructor(build: Build) {
                     val buffer = msg.data.getByteArray(READ_BUFFER_ARRAY) ?: return
                     //这里只对查询状态返回值做处理，其它返回值可参考编程手册来解析
                     val result = judgeResponseType(buffer[0])
-                    var status = MyApplication.context!!.getString(R.string.str_printer_conn_normal)
+                    var status = MyApplication.context.getString(R.string.str_printer_conn_normal)
                     if (sendCommand!!.contentEquals(esc)) {
                         //设置当前打印机模式为ESC模式
                         if (currentPrinterCommand == null) {
@@ -117,16 +117,16 @@ class DeviceConnFactoryManager private constructor(build: Build) {
                             if (result == 0) {//打印机状态查询
                                 val intent = Intent(ACTION_QUERY_PRINTER_STATE)
                                 intent.putExtra(DEVICE_ID, pId)
-                                MyApplication.context!!.sendBroadcast(intent)
+                                MyApplication.context.sendBroadcast(intent)
                             } else if (result == 1) {//查询打印机实时状态
                                 if (buffer[0] and ESC_STATE_PAPER_ERR.toByte() > 0) {
-                                    status += " " + MyApplication.context!!.getString(R.string.str_printer_out_of_paper)
+                                    status += " " + MyApplication.context.getString(R.string.str_printer_out_of_paper)
                                 }
                                 if (buffer[0] and ESC_STATE_COVER_OPEN.toByte() > 0) {
-                                    status += " " + MyApplication.context!!.getString(R.string.str_printer_open_cover)
+                                    status += " " + MyApplication.context.getString(R.string.str_printer_open_cover)
                                 }
                                 if (buffer[0] and ESC_STATE_ERR_OCCURS.toByte() > 0) {
-                                    status += " " + MyApplication.context!!.getString(R.string.str_printer_error)
+                                    status += " " + MyApplication.context.getString(R.string.str_printer_error)
                                 }
                                 ToastUtils.showShort(status)
                             }
@@ -139,24 +139,22 @@ class DeviceConnFactoryManager private constructor(build: Build) {
                         } else {
                             if (cnt == 1) {//查询打印机实时状态
                                 if (buffer[0] and TSC_STATE_PAPER_ERR.toByte() > 0) {//缺纸
-                                    status += " " + MyApplication.context!!.getString(R.string.str_printer_out_of_paper)
+                                    status += " " + MyApplication.context.getString(R.string.str_printer_out_of_paper)
                                 }
                                 if (buffer[0] and TSC_STATE_COVER_OPEN.toByte() > 0) {//开盖
-                                    status += " " + MyApplication.context!!.getString(R.string.str_printer_open_cover)
+                                    status += " " + MyApplication.context.getString(R.string.str_printer_open_cover)
                                 }
                                 if (buffer[0] and TSC_STATE_ERR_OCCURS.toByte() > 0) {//打印机报错
-                                    status += " " + MyApplication.context!!.getString(R.string.str_printer_error)
+                                    status += " " + MyApplication.context.getString(R.string.str_printer_error)
                                 }
                                 ToastUtils.showShort(status)
                             } else {//打印机状态查询
                                 val intent = Intent(ACTION_QUERY_PRINTER_STATE)
                                 intent.putExtra(DEVICE_ID, pId)
-                                MyApplication.context!!.sendBroadcast(intent)
+                                MyApplication.context.sendBroadcast(intent)
                             }
                         }
                     }
-                }
-                else -> {
                 }
             }
         }
@@ -171,7 +169,7 @@ class DeviceConnFactoryManager private constructor(build: Build) {
         }
     }
 
-    enum class CONN_METHOD(val s: String) {
+    enum class ConnectType(val s: String) {
         //蓝牙连接
         BLUETOOTH("BLUETOOTH"),
         //USB连接
@@ -195,12 +193,12 @@ class DeviceConnFactoryManager private constructor(build: Build) {
         deviceConnFactoryManagers[pId]!!.connState = false
         sendStateBroadcast(CONN_STATE_CONNECTING)
         when (deviceConnFactoryManagers[pId]!!.connMethod) {
-            DeviceConnFactoryManager.CONN_METHOD.BLUETOOTH -> {
+            DeviceConnFactoryManager.ConnectType.BLUETOOTH -> {
                 println("id -> $pId")
                 mPort = BluetoothPort(macAddress)
                 connState = deviceConnFactoryManagers[pId]!!.mPort!!.openPort()
             }
-            DeviceConnFactoryManager.CONN_METHOD.USB -> {
+            DeviceConnFactoryManager.ConnectType.USB -> {
                 mPort = UsbPort(mContext!!, mUsbDevice)
                 connState = mPort!!.openPort()
                 if (connState) {
@@ -208,11 +206,11 @@ class DeviceConnFactoryManager private constructor(build: Build) {
                     mContext.registerReceiver(usbStateReceiver, filter)
                 }
             }
-            DeviceConnFactoryManager.CONN_METHOD.WIFI -> {
+            DeviceConnFactoryManager.ConnectType.WIFI -> {
                 mPort = EthernetPort(ip, port)
                 connState = mPort!!.openPort()
             }
-            DeviceConnFactoryManager.CONN_METHOD.SERIAL_PORT -> {
+            DeviceConnFactoryManager.ConnectType.SERIAL_PORT -> {
                 mPort = SerialPort(serialPortPath, baudrate, 0)
                 connState = mPort!!.openPort()
             }
@@ -287,7 +285,7 @@ class DeviceConnFactoryManager private constructor(build: Build) {
         internal var macAddress: String? = null
         internal var usbDevice: UsbDevice? = null
         internal var port: Int = 0
-        internal var connMethod: CONN_METHOD? = null
+        internal var connMethod: ConnectType? = null
         internal var context: Context? = null
         internal var serialPortPath: String? = null
         internal var baudrate: Int = 0
@@ -313,7 +311,7 @@ class DeviceConnFactoryManager private constructor(build: Build) {
             return this
         }
 
-        fun setConnMethod(connMethod: CONN_METHOD): DeviceConnFactoryManager.Build {
+        fun setConnMethod(connMethod: ConnectType): DeviceConnFactoryManager.Build {
             this.connMethod = connMethod
             return this
         }
@@ -443,7 +441,7 @@ class DeviceConnFactoryManager private constructor(build: Build) {
         val intent = Intent(ACTION_CONN_STATE)
         intent.putExtra(STATE, state)
         intent.putExtra(DEVICE_ID, pId)
-        MyApplication.context!!.sendBroadcast(intent)
+        MyApplication.context.sendBroadcast(intent)
     }
 
     /**

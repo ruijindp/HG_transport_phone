@@ -49,7 +49,16 @@ class ConfirmOrderActivity : BaseActivity(), View.OnClickListener {
         }
         tvLinenCount.text = String.format(getString(R.string.dirty_count), totalLinen)
 
-        getHotelInfo()
+//        getHotelInfo()
+
+        tvPrincipal.text = String.format("%s%s", getString(R.string.principal), MyApplication.name)
+        if (pageValue == 1){
+            tvLinenTrend.text = String.format("%s%s - %s", getString(R.string.linen_trend_),
+                    MyApplication.retData?.tradition_hotel_name, MyApplication.retData?.wash_name)
+        } else{
+            tvLinenTrend.text = String.format("%s%s - %s", getString(R.string.linen_trend_),
+                    MyApplication.retData?.wash_name, MyApplication.retData?.tradition_hotel_name)
+        }
     }
 
     private fun getHotelInfo() {

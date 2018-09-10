@@ -31,7 +31,7 @@ class MainActivity : BaseActivity(), View.OnClickListener {
     }
 
     override fun initialize() {
-        val retDate = intent.getSerializableExtra("retData") as RetData
+//        val retDate = intent.getSerializableExtra("retData") as RetData?
         ivPageBack.visibility = View.GONE
         ivScanning.visibility = View.VISIBLE
         flSendLinen.setOnClickListener(this)
@@ -41,7 +41,7 @@ class MainActivity : BaseActivity(), View.OnClickListener {
         ivPrinter.setOnClickListener(this)
         ivScanning.setOnClickListener(this)
 //        checkIsMaturity()
-        tvPageTitle.text  = retDate.tradition_hotel_name
+        tvPageTitle.text  = MyApplication.retData?.tradition_hotel_name
     }
 
     //检查是否过期

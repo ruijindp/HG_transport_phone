@@ -8,9 +8,8 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ListView
 import android.widget.PopupWindow
-import com.blankj.utilcode.util.ToastUtils
 import com.hgkefang.transport.R
-import com.hgkefang.transport.adapter.TestAdapter
+import com.hgkefang.transport.adapter.HotelAdapter
 import com.hgkefang.transport.entity.RetData
 import java.util.*
 
@@ -39,7 +38,7 @@ class NamedEntityPopup private constructor(private val parent: ViewGroup) : Popu
     override fun showAsDropDown(anchor: View) {
         width = (anchor.width + 16 * density).toInt()
         lastAnchor = anchor
-        super.showAsDropDown(anchor, (-8 * density).toInt(), (-8 * density).toInt() - anchor.height)
+        super.showAsDropDown(anchor, (-8 * density).toInt(), (-8 * density).toInt())
     }
 
     override fun onItemClick(parent: AdapterView<*>, view: View, position: Int, id: Long) {
@@ -59,7 +58,7 @@ class NamedEntityPopup private constructor(private val parent: ViewGroup) : Popu
             strings.add(e.tradition_hotel_name)
         }
 //        lvNamedEntities.adapter = ArrayAdapter(parent.context, R.layout.item_named_entity, strings)
-        lvNamedEntities.adapter = TestAdapter(entities)
+        lvNamedEntities.adapter = HotelAdapter(entities)
         val height = ((strings.size * 40 + 24) * density).toInt()//lv margin is 8dp
         setHeight(if (height > 320 * density) (320 * density).toInt() else height)
     }

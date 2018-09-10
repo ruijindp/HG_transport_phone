@@ -14,7 +14,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".LoginActivity"
+        <activity
+            android:name=".LoginActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -22,24 +23,32 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".HotelActivity"
+        <activity
+            android:name=".HotelActivity"
             android:screenOrientation="portrait"/>
-        <activity android:name=".MainActivity"
-                  android:screenOrientation="portrait"/>
-        <activity android:name=".LinenTypeActivity"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden|adjustPan"/>
-        <activity android:name=".HistoryOrderActivity"
+        <activity
+            android:name=".MainActivity"
             android:screenOrientation="portrait"/>
-        <activity android:name=".OrderDetailActivity"
+        <activity
+            android:name=".LinenTypeActivity"
             android:screenOrientation="portrait"/>
-        <activity android:name=".ConfirmOrderActivity"
+        <activity
+            android:name=".HistoryOrderActivity"
             android:screenOrientation="portrait"/>
-        <activity android:name=".SuccessActivity"
+        <activity
+            android:name=".OrderDetailActivity"
             android:screenOrientation="portrait"/>
-        <activity android:name=".MaturityActivity"
+        <activity
+            android:name=".ConfirmOrderActivity"
             android:screenOrientation="portrait"/>
-        <activity android:name=".BluetoothActivity"
+        <activity
+            android:name=".SuccessActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".MaturityActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".BluetoothActivity"
             android:screenOrientation="portrait"/>
     </application>
 

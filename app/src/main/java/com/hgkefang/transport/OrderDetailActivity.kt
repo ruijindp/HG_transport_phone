@@ -25,10 +25,7 @@ import com.hgkefang.transport.app.MyApplication
 import com.hgkefang.transport.entity.CommonResult
 import com.hgkefang.transport.entity.RetData
 import com.hgkefang.transport.net.API_LINEN_TYPE
-import com.hgkefang.transport.util.DeviceConnFactoryManager
-import com.hgkefang.transport.util.PrinterCommand
-import com.hgkefang.transport.util.ThreadPool
-import com.hgkefang.transport.util.TimeUtil
+import com.hgkefang.transport.util.*
 import kotlinx.android.synthetic.main.activity_order_detail.*
 import kotlinx.android.synthetic.main.view_title.*
 import org.jetbrains.anko.toast
@@ -124,15 +121,15 @@ class OrderDetailActivity : BaseActivity(), View.OnClickListener {
     private val runnable = Runnable {
         DeviceConnFactoryManager.Build()
                 .setId(id)
-                .setConnMethod(DeviceConnFactoryManager.CONN_METHOD.BLUETOOTH)
+                .setConnMethod(DeviceConnFactoryManager.ConnectType.BLUETOOTH)
                 .setMacAddress(spUtils.getString("macAddress", ""))
                 .build()
         DeviceConnFactoryManager.deviceConnFactoryManagers[id]!!.openPort()
 //        Handler().postDelayed({
-//            if (!DeviceConnFactoryManager.deviceConnFactoryManagers[id].getConnState()) {
-//                ToastUtils.showShort("未找到打印机")
-//                runOnUiThread { tvConnectPrinter.text = "连接打印机" }
-//            }
+            if (!DeviceConnFactoryManager.deviceConnFactoryManagers[id]!!.connState) {
+                ToastUtils.showShort("未找到打印机")
+                runOnUiThread { tvConnectPrinter.text = "连接打印机" }
+            }
 //        }, 10)
     }
 
@@ -257,7 +254,7 @@ class OrderDetailActivity : BaseActivity(), View.OnClickListener {
                     val strIp = msg.data.getString("Ip")
                     val strPort = msg.data.getString("Port")
                     DeviceConnFactoryManager.Build()
-                            .setConnMethod(DeviceConnFactoryManager.CONN_METHOD.WIFI)
+                            .setConnMethod(DeviceConnFactoryManager.ConnectType.WIFI)
                             .setIp(strIp!!)
                             .setId(id)
                             .setPort(Integer.parseInt(strPort!!))
@@ -284,15 +281,17 @@ class OrderDetailActivity : BaseActivity(), View.OnClickListener {
         macAddress = data!!.getStringExtra("address")
         DeviceConnFactoryManager.Build()
                 .setId(id)
-                .setConnMethod(DeviceConnFactoryManager.CONN_METHOD.BLUETOOTH)
+                .setConnMethod(DeviceConnFactoryManager.ConnectType.BLUETOOTH)
                 .setMacAddress(macAddress!!)
                 .build()
         DeviceConnFactoryManager.deviceConnFactoryManagers[id]!!.openPort()
+
+        Handler().postDelayed({btnReceiptPrint()}, 500)
+
     }
 
     private fun btnReceiptPrint() {
-//        || !DeviceConnFactoryManager.deviceConnFactoryManagers[id].getConnState()
-        if (DeviceConnFactoryManager.deviceConnFactoryManagers[id] == null) {
+        if (DeviceConnFactoryManager.deviceConnFactoryManagers[id] == null|| !DeviceConnFactoryManager.deviceConnFactoryManagers[id]!!.connState) {
             ToastUtils.showShort("请先连接打印机")
             bluetoothConnect()
             return
@@ -323,6 +322,7 @@ class OrderDetailActivity : BaseActivity(), View.OnClickListener {
         esc.addSelectPrintModes(EscCommand.FONT.FONTA, EscCommand.ENABLE.OFF, EscCommand.ENABLE.OFF, EscCommand.ENABLE.OFF, EscCommand.ENABLE.OFF)
         esc.addSelectJustification(EscCommand.JUSTIFICATION.LEFT)
         esc.addPrintAndLineFeed()
+        esc.addText("酒店名称：${MyApplication.retData?.tradition_hotel_name}\n")
         esc.addText("订单号：${retData!!.tradition_ordernumber}\n")
         esc.addText("负责人：${MyApplication.name}\n")
         if (pageValue == 1) {
@@ -346,7 +346,15 @@ class OrderDetailActivity : BaseActivity(), View.OnClickListener {
             for (retData in typeResult) {
                 retData.son.map {
                     if (it.id == result.split("-")[0]) {
-                        sb.append(String.format("%s%s\t\t\t x%s", it.tradition_name, it.tradition_spec, result.split("-")[1]))
+                        var linenType = "${it.tradition_name}${it.tradition_spec}"
+                        val stringBuilder = StringBuilder(linenType)
+                        if (linenType.length < 30){
+                            for (i in 0 until (30 - linenType.length)) {
+                                stringBuilder.append(" ")
+                            }
+                            linenType = stringBuilder.toString()
+                        }
+                        sb.append(String.format("%s\t x%s", linenType, result.split("-")[1]))
                     }
                 }
             }

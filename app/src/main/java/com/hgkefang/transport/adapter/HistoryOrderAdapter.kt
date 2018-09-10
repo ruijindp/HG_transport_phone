@@ -10,17 +10,16 @@ import android.widget.TextView
 import com.hgkefang.transport.OrderDetailActivity
 import com.hgkefang.transport.R
 import com.hgkefang.transport.app.MyApplication
-import com.hgkefang.transport.entity.OrderEvent
 import com.hgkefang.transport.entity.RetData
-import com.hgkefang.transport.fragment.HistoryOrderFragment
 import com.hgkefang.transport.util.TimeUtil
-import org.greenrobot.eventbus.EventBus
 
 /**
  * Create by admin on 2018/9/4
  * 订单
  */
-class HistoryOrderAdapter(private val pageValue: Int, private var result: ArrayList<RetData>) : RecyclerView.Adapter<HistoryOrderAdapter.ViewHolder>() {
+class HistoryOrderAdapter(private val pageValue: Int,
+                          private var result: ArrayList<RetData>,
+                          private var onSelectListener: OnSelectListener) : RecyclerView.Adapter<HistoryOrderAdapter.ViewHolder>() {
 
     fun setNewData(result: ArrayList<RetData>) {
         this.result = result
@@ -55,17 +54,15 @@ class HistoryOrderAdapter(private val pageValue: Int, private var result: ArrayL
             holder.tvOrderCount.text = totalCount.toString()
         }
         holder.rootView.setOnClickListener {
-            val intent =  Intent(it.context, OrderDetailActivity::class.java)
+            val intent = Intent(it.context, OrderDetailActivity::class.java)
             intent.putExtra("retData", result[position])
             intent.putExtra("pageValue", pageValue)
             it.context.startActivity(intent)
         }
         holder.tvPrinterOrder.setOnClickListener {
-            EventBus.getDefault().post(OrderEvent(result[position]))
+            onSelectListener.onPrinter(result[position], position)
         }
-        holder.tvPrinterOrder.visibility = View.GONE
     }
-
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         var tvOrderTime = view.findViewById(R.id.tvOrderTime) as TextView
@@ -75,5 +72,10 @@ class HistoryOrderAdapter(private val pageValue: Int, private var result: ArrayL
         var tvOrderCount = view.findViewById(R.id.tvOrderCount) as TextView
         var tvPrinterOrder = view.findViewById(R.id.tvPrinterOrder) as TextView
         val rootView = view.findViewById(R.id.rootView) as CardView
+    }
+
+
+    interface OnSelectListener {
+        fun onPrinter(retData: RetData, position: Int)
     }
 }

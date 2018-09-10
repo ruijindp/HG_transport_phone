@@ -44,9 +44,9 @@ abstract class BaseFragment : Fragment() {
         initialize()
     }
 
-    abstract fun getLayoutID(): Int
+    protected abstract fun getLayoutID(): Int
 
-    abstract fun initialize()
+    protected abstract fun initialize()
 
     protected fun initSwipeRefreshLayout(swipeRefreshLayout: SwipeRefreshLayout) {
         swipeRefreshLayout.setColorSchemeColors(ContextCompat.getColor(requireActivity(), R.color.colorAccent))

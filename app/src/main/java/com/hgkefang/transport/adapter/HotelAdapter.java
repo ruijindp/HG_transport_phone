@@ -14,11 +14,11 @@ import java.util.List;
 /**
  * Create by admin on 2018/9/7
  */
-public class TestAdapter extends BaseAdapter {
+public class HotelAdapter extends BaseAdapter {
 
     private List<RetData> results;
 
-    public TestAdapter(List<RetData> results) {
+    public HotelAdapter(List<RetData> results) {
         this.results = results;
     }
 

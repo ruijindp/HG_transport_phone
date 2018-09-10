@@ -254,15 +254,13 @@
             android:layout_weight="1"
             android:layout_marginEnd="15dp"
             android:layout_marginStart="15dp"
-            android:visibility="visible"
+            android:visibility="gone"
             android:text="@string/connect"/>
 
         <TextView
             android:id="@+id/tvPrinter"
             style="@style/btn_style"
             android:layout_weight="1"
-            android:layout_marginStart="15dp"
-            android:layout_marginEnd="15dp"
             android:text="@string/printer_order"/>
     </LinearLayout>
 </LinearLayout>
