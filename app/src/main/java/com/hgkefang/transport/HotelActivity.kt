@@ -59,9 +59,9 @@ class HotelActivity : BaseActivity(), View.OnClickListener, NamedEntityPopup.Ent
 
     private fun refreshData() {
         showLoadingDialog()
-        val params = LinkedHashMap<String, Any>()
+        val params = LinkedHashMap<String, Any?>()
         params["hotel_name"] = etHotel.text.toString()
-        params["token"] = MyApplication.token!!
+        params["token"] = MyApplication.token
         API_HOTEL_INFO.httpPost(getRequestParams(Gson().toJson(params))) { statusCode, body ->
             Log.i("response_hotel", body)
             dismissDialog()
@@ -88,7 +88,6 @@ class HotelActivity : BaseActivity(), View.OnClickListener, NamedEntityPopup.Ent
             return
         }
         val intent = Intent(this, MainActivity::class.java)
-//        intent.putExtra("retData", MyApplication.retData)
         startActivity(intent)
         finish()
     }

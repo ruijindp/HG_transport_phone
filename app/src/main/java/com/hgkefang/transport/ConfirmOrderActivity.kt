@@ -63,9 +63,9 @@ class ConfirmOrderActivity : BaseActivity(), View.OnClickListener {
 
     private fun getHotelInfo() {
         showLoadingDialog()
-        val params = LinkedHashMap<String, Any>()
+        val params = LinkedHashMap<String, Any?>()
         params["hotel_name"] = ""
-        params["token"] = MyApplication.token!!
+        params["token"] = MyApplication.token
         API_HOTEL_INFO.httpPost (getRequestParams(Gson().toJson(params))){ statusCode, body ->
             Log.i("response_hotel", body)
             dismissDialog()

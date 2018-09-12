@@ -16,6 +16,7 @@ class MyApplication : Application() {
         var name: String? = null
         var context: Context by Delegates.notNull()
         var retData: RetData? = null
+        var hasConnectPrinter = false
     }
 
     override fun onCreate() {

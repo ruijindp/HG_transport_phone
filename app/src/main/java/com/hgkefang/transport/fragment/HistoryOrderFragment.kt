@@ -8,7 +8,6 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.hardware.usb.UsbManager
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -16,6 +15,7 @@ import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.RecyclerView
 import android.text.TextUtils
 import android.util.Log
+import com.blankj.utilcode.util.NetworkUtils
 import com.blankj.utilcode.util.SPUtils
 import com.blankj.utilcode.util.TimeUtils
 import com.blankj.utilcode.util.ToastUtils
@@ -47,10 +47,8 @@ import kotlin.collections.ArrayList
  */
 class HistoryOrderFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListener, HistoryOrderAdapter.OnSelectListener {
 
-
     private val CONN_STATE_DISCONNECT = 0x007
     private val PRINTER_COMMAND_ERROR = 0x008
-    private val ACTION_USB_PERMISSION = "com.android.example.USB_PERMISSION"
     private val ACTION_QUERY_PRINTER_STATE = "action_query_printer_state"
     private val CONN_STATE_FAILED = CONN_STATE_DISCONNECT shl 2
     private val CONN_PRINTER = 0x12
@@ -108,7 +106,8 @@ class HistoryOrderFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListene
                 }
             }
         })
-        connectBle()
+        if (!MyApplication.hasConnectPrinter)
+            connectBle()
     }
 
     private fun connectBle() {
@@ -139,14 +138,17 @@ class HistoryOrderFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListene
 
     override fun onStart() {
         super.onStart()
-        val filter = IntentFilter(ACTION_USB_PERMISSION)
-        filter.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED)
+        val filter = IntentFilter()
         filter.addAction(ACTION_QUERY_PRINTER_STATE)
         filter.addAction(DeviceConnFactoryManager.ACTION_CONN_STATE)
         requireActivity().registerReceiver(receiver, filter)
     }
 
     private fun refreshData() {
+        if (!NetworkUtils.isConnected()) {
+            toast(R.string.toast_no_net)
+            return
+        }
         if (currentPage == 1) {
             if (!swipeRefreshLayout!!.isRefreshing) {
                 swipeRefreshLayout.post { swipeRefreshLayout!!.isRefreshing = true }
@@ -247,16 +249,20 @@ class HistoryOrderFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListene
                     when (state) {
                         DeviceConnFactoryManager.CONN_STATE_DISCONNECT -> if (mId == deviceId) {
                             ToastUtils.showShort("打印机断开")
+                            MyApplication.hasConnectPrinter = false
                         }
                         DeviceConnFactoryManager.CONN_STATE_CONNECTING -> {
                             ToastUtils.showShort("打印机连接中...")
+                            MyApplication.hasConnectPrinter = false
                         }
                         DeviceConnFactoryManager.CONN_STATE_CONNECTED -> {
                             ToastUtils.showShort("打印机已连接")
                             mHandler.obtainMessage(MESSAGE_PUT).sendToTarget()
+                            MyApplication.hasConnectPrinter = true
                         }
                         CONN_STATE_FAILED -> {
                             ToastUtils.showShort("打印机连接失败")
+                            MyApplication.hasConnectPrinter = false
                         }
                     }
                 }
@@ -312,7 +318,6 @@ class HistoryOrderFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListene
         Handler().postDelayed({ btnReceiptPrint() }, 500)
     }
 
-    //     startActivityForResult(Intent(requireActivity(), BluetoothActivity::class.java), BLUETOOTH_REQUEST_CODE)
     private fun btnReceiptPrint() {
         if (DeviceConnFactoryManager.deviceConnFactoryManagers[mId] == null) {
             ToastUtils.showShort("请先连接打印机")
@@ -402,8 +407,10 @@ class HistoryOrderFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListene
 
     override fun onDestroyView() {
         super.onDestroyView()
-        requireActivity().unregisterReceiver(receiver)
-        DeviceConnFactoryManager.closeAllPort()
+        if (!MyApplication.hasConnectPrinter) {
+            requireActivity().unregisterReceiver(receiver)
+//            DeviceConnFactoryManager.closeAllPort()
+        }
         if (threadPool != null) {
             threadPool!!.stopThreadPool()
         }

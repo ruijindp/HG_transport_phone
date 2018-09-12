@@ -78,7 +78,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:contentDescription="@string/send_linen"
-                    android:scaleType="centerCrop"
+                    android:scaleType="fitXY"
                     android:src="@mipmap/ic_send_linen"/>
 
                 <LinearLayout
@@ -129,7 +129,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:contentDescription="@string/send_linen"
-                    android:scaleType="centerCrop"
+                    android:scaleType="fitXY"
                     android:src="@mipmap/ic_pick_linen"/>
 
                 <LinearLayout
@@ -180,7 +180,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:contentDescription="@string/send_linen"
-                    android:scaleType="centerCrop"
+                    android:scaleType="fitXY"
                     android:src="@mipmap/ic_pollution"/>
 
                 <LinearLayout
@@ -231,7 +231,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:contentDescription="@string/send_linen"
-                    android:scaleType="centerCrop"
+                    android:scaleType="fitXY"
                     android:src="@mipmap/ic_rewash_linen"/>
 
                 <LinearLayout

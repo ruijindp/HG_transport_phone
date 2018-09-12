@@ -32,6 +32,7 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
         if (!TextUtils.isEmpty(MyApplication.token)) {
             startActivity(Intent(this, HotelActivity::class.java))
             finish()
+            return
         }
         if (!TextUtils.isEmpty(spUtils.getString("userName"))) {
             etAccount.setText(spUtils.getString("userName"))

@@ -98,8 +98,8 @@ abstract class BaseActivity : AppCompatActivity() {
     protected fun tokenInvalid() {
         toast(R.string.toast_token_invalid)
         MyApplication.token = null
-        SPUtils.getInstance(Activity.MODE_PRIVATE).clear()
-        val intent = Intent(this@BaseActivity, HotelActivity::class.java)
+        SPUtils.getInstance(Activity.MODE_PRIVATE).remove("token")
+        val intent = Intent(this@BaseActivity, LoginActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         startActivity(intent)
     }

@@ -71,4 +71,5 @@
 
     <string name="toast_token_invalid">登录失效，请重新登录！</string>
     <string name="toast_no_linen">还没有选择布草</string>
+    <string name="toast_no_net">请检查网络是否连接</string>
 </resources>

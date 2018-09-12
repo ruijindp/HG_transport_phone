@@ -15,7 +15,7 @@ import com.blankj.utilcode.util.NetworkUtils
 import com.blankj.utilcode.util.SPUtils
 import com.blankj.utilcode.util.TimeUtils
 import com.bronze.kutil.Param
-import com.hgkefang.transport.HotelActivity
+import com.hgkefang.transport.LoginActivity
 import com.hgkefang.transport.R
 import com.hgkefang.transport.app.MyApplication
 import com.hgkefang.transport.net.APP_PORT
@@ -104,8 +104,8 @@ abstract class BaseFragment : Fragment() {
     protected fun tokenInvalid() {
         toast(R.string.toast_token_invalid)
         MyApplication.token = null
-        SPUtils.getInstance(Activity.MODE_PRIVATE).clear()
-        val intent = Intent(requireActivity(), HotelActivity::class.java)
+        SPUtils.getInstance(Activity.MODE_PRIVATE).remove("token")
+        val intent = Intent(requireActivity(), LoginActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         startActivity(intent)
     }

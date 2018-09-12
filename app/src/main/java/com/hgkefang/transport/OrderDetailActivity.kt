@@ -25,7 +25,10 @@ import com.hgkefang.transport.app.MyApplication
 import com.hgkefang.transport.entity.CommonResult
 import com.hgkefang.transport.entity.RetData
 import com.hgkefang.transport.net.API_LINEN_TYPE
-import com.hgkefang.transport.util.*
+import com.hgkefang.transport.util.DeviceConnFactoryManager
+import com.hgkefang.transport.util.PrinterCommand
+import com.hgkefang.transport.util.ThreadPool
+import com.hgkefang.transport.util.TimeUtil
 import kotlinx.android.synthetic.main.activity_order_detail.*
 import kotlinx.android.synthetic.main.view_title.*
 import org.jetbrains.anko.toast
@@ -43,11 +46,10 @@ class OrderDetailActivity : BaseActivity(), View.OnClickListener {
     private val BLUETOOTH_REQUEST_CODE = 0x001
     private val CONN_STATE_DISCONNECT = 0x007
     private val PRINTER_COMMAND_ERROR = 0x008
-    private val ACTION_USB_PERMISSION = "com.android.example.USB_PERMISSION"
     private val ACTION_QUERY_PRINTER_STATE = "action_query_printer_state"
     private val CONN_STATE_FAILED = CONN_STATE_DISCONNECT shl 2
     private val CONN_PRINTER = 0x12
-    val MESSAGE_UPDATE_PARAMETER = 0x009
+    private val MESSAGE_UPDATE_PARAMETER = 0x009
     private val MESSAGE_PUT = 0x002
 
     private val id = 1
@@ -101,7 +103,8 @@ class OrderDetailActivity : BaseActivity(), View.OnClickListener {
 
         getLineTypeData()
 
-        connectBle()
+        if (!MyApplication.hasConnectPrinter)
+            connectBle()
     }
 
     private fun connectBle() {
@@ -126,10 +129,10 @@ class OrderDetailActivity : BaseActivity(), View.OnClickListener {
                 .build()
         DeviceConnFactoryManager.deviceConnFactoryManagers[id]!!.openPort()
 //        Handler().postDelayed({
-            if (!DeviceConnFactoryManager.deviceConnFactoryManagers[id]!!.connState) {
-                ToastUtils.showShort("未找到打印机")
-                runOnUiThread { tvConnectPrinter.text = "连接打印机" }
-            }
+        if (!DeviceConnFactoryManager.deviceConnFactoryManagers[id]!!.connState) {
+            ToastUtils.showShort("未找到打印机")
+            runOnUiThread { tvConnectPrinter.text = "连接打印机" }
+        }
 //        }, 10)
     }
 
@@ -179,17 +182,20 @@ class OrderDetailActivity : BaseActivity(), View.OnClickListener {
 
     override fun onStart() {
         super.onStart()
-        val filter = IntentFilter(ACTION_USB_PERMISSION)
-        filter.addAction(ACTION_USB_DEVICE_DETACHED)
-        filter.addAction(ACTION_QUERY_PRINTER_STATE)
-        filter.addAction(DeviceConnFactoryManager.ACTION_CONN_STATE)
-        registerReceiver(receiver, filter)
+        if(!MyApplication.hasConnectPrinter){
+            val filter = IntentFilter()
+            filter.addAction(ACTION_QUERY_PRINTER_STATE)
+            filter.addAction(DeviceConnFactoryManager.ACTION_CONN_STATE)
+            registerReceiver(receiver, filter)
+        }
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        unregisterReceiver(receiver)
-        DeviceConnFactoryManager.closeAllPort()
+        if(!MyApplication.hasConnectPrinter){
+            unregisterReceiver(receiver)
+//            DeviceConnFactoryManager.closeAllPort()
+        }
         if (threadPool != null) {
             threadPool!!.stopThreadPool()
         }
@@ -217,23 +223,23 @@ class OrderDetailActivity : BaseActivity(), View.OnClickListener {
                         DeviceConnFactoryManager.CONN_STATE_DISCONNECT -> if (id == deviceId) {
                             ToastUtils.showShort("打印机断开")
                             tvConnectPrinter.text = "连接打印机"
-//                            tvPrinter.setVisibility(View.GONE)
+                            MyApplication.hasConnectPrinter = false
                         }
                         DeviceConnFactoryManager.CONN_STATE_CONNECTING -> {
                             ToastUtils.showShort("打印机连接中...")
                             tvConnectPrinter.text = "连接打印机"
-//                            tvPrinter.setVisibility(View.GONE)
+                            MyApplication.hasConnectPrinter = false
                         }
                         DeviceConnFactoryManager.CONN_STATE_CONNECTED -> {
                             ToastUtils.showShort("打印机已连接")
                             tvConnectPrinter.text = "断开打印机"
-//                            tvPrinter.setVisibility(View.VISIBLE)
                             mHandler.obtainMessage(MESSAGE_PUT).sendToTarget()
+                            MyApplication.hasConnectPrinter = true
                         }
                         CONN_STATE_FAILED -> {
                             ToastUtils.showShort("打印机连接失败")
                             tvConnectPrinter.text = "连接打印机"
-//                            tvPrinter.setVisibility(View.GONE)
+                            MyApplication.hasConnectPrinter = false
                         }
                     }
                 }
@@ -286,12 +292,12 @@ class OrderDetailActivity : BaseActivity(), View.OnClickListener {
                 .build()
         DeviceConnFactoryManager.deviceConnFactoryManagers[id]!!.openPort()
 
-        Handler().postDelayed({btnReceiptPrint()}, 500)
+//        Handler().postDelayed({ btnReceiptPrint() }, 500)
 
     }
 
     private fun btnReceiptPrint() {
-        if (DeviceConnFactoryManager.deviceConnFactoryManagers[id] == null|| !DeviceConnFactoryManager.deviceConnFactoryManagers[id]!!.connState) {
+        if (DeviceConnFactoryManager.deviceConnFactoryManagers[id] == null || !DeviceConnFactoryManager.deviceConnFactoryManagers[id]!!.connState) {
             ToastUtils.showShort("请先连接打印机")
             bluetoothConnect()
             return
@@ -348,7 +354,7 @@ class OrderDetailActivity : BaseActivity(), View.OnClickListener {
                     if (it.id == result.split("-")[0]) {
                         var linenType = "${it.tradition_name}${it.tradition_spec}"
                         val stringBuilder = StringBuilder(linenType)
-                        if (linenType.length < 30){
+                        if (linenType.length < 30) {
                             for (i in 0 until (30 - linenType.length)) {
                                 stringBuilder.append(" ")
                             }
