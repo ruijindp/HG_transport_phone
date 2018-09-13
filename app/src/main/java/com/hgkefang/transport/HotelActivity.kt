@@ -54,7 +54,6 @@ class HotelActivity : BaseActivity(), View.OnClickListener, NamedEntityPopup.Ent
                 MyApplication.retData = results[index]
             }
         }
-
     }
 
     private fun refreshData() {

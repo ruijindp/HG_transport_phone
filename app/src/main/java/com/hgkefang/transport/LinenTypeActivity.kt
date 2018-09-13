@@ -53,8 +53,7 @@ class LinenTypeActivity : BaseActivity(), View.OnClickListener {
 
         addResult = ArrayList()
 
-        refreshData()
-
+//        refreshData()
         getShoeIDData()
     }
 
