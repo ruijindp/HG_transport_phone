@@ -22,8 +22,8 @@ data class ErrMsg(
 
 data class RetData(
         val token: String,
-        val time:String,
-        val name:String,
+        val time: String,
+        val name: String,
 
         val id: String,
         val tradition_name: String,
@@ -46,12 +46,14 @@ data class RetData(
         val tradition_action: String,
         val tradition_transport_id: String,
         val tradition_order_type: String,
-        val tradition_wash_name: String
+        val tradition_wash_name: String,
+
+        val slipper: Int
 ) : Serializable
 
 data class Son(
-    val id: String,
-    val tradition_name: String,
-    val tradition_pid: String,
-    val tradition_spec: String
+        val id: String,
+        val tradition_name: String,
+        val tradition_pid: String,
+        val tradition_spec: String
 )

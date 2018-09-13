@@ -47,6 +47,8 @@
     <string name="jump">秒后将为您自动跳转</string>
     <string name="maturity">抱歉，您的布草录入权限已于\n%s到期，请续费！</string>
     <string name="maturity_date">您的洗涤录入还有%s天到期，\n为了不影响使用请尽快续费</string>
+    <string name="linen">布草</string>
+    <string name="shoe">拖鞋</string>
 
     <string name="digits_number">0123456789</string>
     <string name="hint_number">输入数量</string>

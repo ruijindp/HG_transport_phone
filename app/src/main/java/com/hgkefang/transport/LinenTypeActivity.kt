@@ -1,6 +1,7 @@
 package com.hgkefang.transport
 
 import android.content.Intent
+import android.support.v4.content.ContextCompat
 import android.util.Log
 import android.view.View
 import android.view.WindowManager
@@ -10,7 +11,10 @@ import com.hgkefang.transport.adapter.LinenTypeAdapter
 import com.hgkefang.transport.app.MyApplication
 import com.hgkefang.transport.entity.CommonResult
 import com.hgkefang.transport.entity.EvenBusEven
+import com.hgkefang.transport.entity.ObjectResult
+import com.hgkefang.transport.entity.RetData
 import com.hgkefang.transport.net.API_LINEN_TYPE
+import com.hgkefang.transport.net.API_SHOE_TYPE
 import kotlinx.android.synthetic.main.activity_linen_type.*
 import kotlinx.android.synthetic.main.view_title.*
 import org.greenrobot.eventbus.EventBus
@@ -25,6 +29,8 @@ import org.jetbrains.anko.toast
 class LinenTypeActivity : BaseActivity(), View.OnClickListener {
 
     private lateinit var addResult: ArrayList<EvenBusEven>
+    private var currentTab = 1
+    private var shoeId = -1
 
     override fun getLayoutID(): Int {
         return R.layout.activity_linen_type
@@ -34,6 +40,8 @@ class LinenTypeActivity : BaseActivity(), View.OnClickListener {
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
         ivPageBack.setOnClickListener(this)
         tvCommitOrder.setOnClickListener(this)
+        flLinen.setOnClickListener(this)
+        flShoe.setOnClickListener(this)
         tvLinenCount.text = String.format(getString(R.string.total_linen), 0)
 
         when (intent.getIntExtra("pageValue", -1)) {
@@ -46,10 +54,40 @@ class LinenTypeActivity : BaseActivity(), View.OnClickListener {
         addResult = ArrayList()
 
         refreshData()
+
+        getShoeIDData()
+    }
+
+    private fun getShoeIDData() {
+        showLoadingDialog()
+        val params = LinkedHashMap<String, Any?>()
+        params["token"] = MyApplication.token
+        API_SHOE_TYPE.httpPost(getRequestParams(Gson().toJson(params))) { statusCode, body ->
+            Log.i("response_linen", body)
+            if (statusCode != 200) {
+                dismissDialog()
+                toast("网络错误：$statusCode")
+                return@httpPost
+            }
+            Gson().fromJson<ObjectResult>(body, ObjectResult::class.java).let { it ->
+                if (it.errMsg.code == 301) {
+                    tokenInvalid()
+                    dismissDialog()
+                    return@httpPost
+                }
+                if (it.errMsg.code != 200) {
+                    toast(it.message)
+                    dismissDialog()
+                    return@httpPost
+                }
+                shoeId = it.retData.slipper
+                refreshData()
+            }
+        }
     }
 
     private fun refreshData() {
-        showLoadingDialog()
+//        showLoadingDialog()
         val params = LinkedHashMap<String, Any?>()
         params["hotel_id"] = MyApplication.hotel_id
         params["token"] = MyApplication.token
@@ -69,7 +107,16 @@ class LinenTypeActivity : BaseActivity(), View.OnClickListener {
                     toast(it.message)
                     return@httpPost
                 }
-                rvContent.adapter = LinenTypeAdapter(it.retData)
+                val linenResults = ArrayList<RetData>()
+                val shoeResults = ArrayList<RetData>()
+                it.retData.map {
+                    if (it.id == shoeId.toString()){
+                        shoeResults.add(it)
+                    } else{
+                        linenResults.add(it)
+                    }
+                }
+                rvContent.adapter = LinenTypeAdapter(if (currentTab == 1) linenResults else shoeResults)
             }
         }
     }
@@ -87,6 +134,22 @@ class LinenTypeActivity : BaseActivity(), View.OnClickListener {
                     it.putExtra("pageValue", intent.getIntExtra("pageValue", -1))
                     startActivity(it)
                 }
+            }
+            R.id.flLinen -> {
+                currentTab = 1
+                view1.visibility = View.VISIBLE
+                view2.visibility = View.INVISIBLE
+                tvLinen.setTextColor(ContextCompat.getColor(this, R.color.colorAccent))
+                tvShoe.setTextColor(ContextCompat.getColor(this, R.color.black_2d))
+                refreshData()
+            }
+            R.id.flShoe -> {
+                currentTab = 2
+                view1.visibility = View.INVISIBLE
+                view2.visibility = View.VISIBLE
+                tvShoe.setTextColor(ContextCompat.getColor(this, R.color.colorAccent))
+                tvLinen.setTextColor(ContextCompat.getColor(this, R.color.black_2d))
+                refreshData()
             }
         }
     }

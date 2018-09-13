@@ -11,6 +11,8 @@ const val API_LOGIN = "$ROOT_URL/user-login.json"
 const val API_CHECK_EXPIRE = "$ROOT_URL/common_check_user.json"
 //获取布草类型
 const val API_LINEN_TYPE = "$ROOT_URL/tradition_get_linen_type.json"
+//获取拖鞋
+const val API_SHOE_TYPE = "$ROOT_URL/tradition_get_slipper.json"
 //提交订单
 const val API_COMMIT_ORDER = "$ROOT_URL/tradition_submitorder.json"
 //获取酒店信息
