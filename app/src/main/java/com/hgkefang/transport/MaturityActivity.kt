@@ -2,6 +2,7 @@ package com.hgkefang.transport
 
 import android.app.Activity
 import android.content.Intent
+import android.os.Bundle
 import android.os.CountDownTimer
 import com.blankj.utilcode.util.SPUtils
 import com.hgkefang.transport.app.MyApplication
@@ -19,7 +20,7 @@ class MaturityActivity : BaseActivity() {
         return R.layout.activity_maturity
     }
 
-    override fun initialize() {
+    override fun initialize(savedInstanceState: Bundle?) {
         val maturityTime = intent.getStringExtra("time")
         tvDate.text = String.format(getString(R.string.maturity), TimeUtil.strTime2Date(maturityTime, "yyyy-MM-dd"))
         countDownTimer.start()

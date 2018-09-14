@@ -1,6 +1,7 @@
 package com.hgkefang.transport
 
 import android.content.Intent
+import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.util.Log
 import android.view.View
@@ -36,7 +37,7 @@ class LinenTypeActivity : BaseActivity(), View.OnClickListener {
         return R.layout.activity_linen_type
     }
 
-    override fun initialize() {
+    override fun initialize(savedInstanceState: Bundle?) {
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
         ivPageBack.setOnClickListener(this)
         tvCommitOrder.setOnClickListener(this)

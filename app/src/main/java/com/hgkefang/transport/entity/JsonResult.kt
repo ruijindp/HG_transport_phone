@@ -37,6 +37,7 @@ data class RetData(
         val tradition_wash_id: String,
         val tradition_hotel_name: String,
         val wash_name: String,
+        val floor_name: String?,
 
         val tradition_ordernumber: String,
         val tradition_data: String,

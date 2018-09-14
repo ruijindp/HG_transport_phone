@@ -33,10 +33,14 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
-    implementation project(':kutil')
+    //    implementation project(':kutil')
+    implementation project(':zxing')
     implementation 'com.blankj:utilcode:1.19.0'
     implementation 'com.android.support:cardview-v7:28.0.0-rc02'
     implementation 'org.greenrobot:eventbus:3.1.1'
     implementation 'com.gyf.barlibrary:barlibrary:2.3.0'
     implementation files('libs/gprintersdkv1.jar')
+    //    implementation 'com.journeyapps:zxing-android-embedded:3.5.0'
+    implementation 'com.google.zxing:core:3.3.0'
+    implementation project(':kutil')
 }

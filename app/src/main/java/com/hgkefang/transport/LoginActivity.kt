@@ -2,12 +2,14 @@ package com.hgkefang.transport
 
 import android.app.Activity
 import android.content.Intent
+import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
 import android.view.View
 import com.blankj.utilcode.util.SPUtils
 import com.bronze.kutil.httpPost
 import com.google.gson.Gson
+import com.gyf.barlibrary.ImmersionBar
 import com.hgkefang.transport.app.MyApplication
 import com.hgkefang.transport.entity.ObjectResult
 import com.hgkefang.transport.net.API_LOGIN
@@ -27,10 +29,11 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
         return R.layout.activity_login
     }
 
-    override fun initialize() {
+    override fun initialize(savedInstanceState: Bundle?) {
+        hasNeedFitWindow = true
         spUtils = SPUtils.getInstance(Activity.MODE_PRIVATE)
         if (!TextUtils.isEmpty(MyApplication.token)) {
-            startActivity(Intent(this, HotelActivity::class.java))
+            startActivity(Intent(this, ProxyActivity::class.java))
             finish()
             return
         }
@@ -55,7 +58,6 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
         params["account"] = etAccount.text.toString()
         params["password"] = SecretUtil.get32MD5Str(etPassword.text.toString())
         params["sign"] = SecretUtil.get32MD5Str(Gson().toJson(params)).toUpperCase()
-        Log.i("doLogin", params.toString())
         API_LOGIN.httpPost(getRequestParams(Gson().toJson(params))) { statusCode, body ->
             Log.i("doLogin", body)
             dismissDialog()
@@ -74,10 +76,9 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
                 spUtils.put("name", it.retData.name)
                 spUtils.put("userName", etAccount.text.toString())
                 spUtils.put("password", etPassword.text.toString())
-                startActivity(Intent(this, HotelActivity::class.java))
+                startActivity(Intent(this, ProxyActivity::class.java))
                 finish()
             }
         }
     }
-
 }

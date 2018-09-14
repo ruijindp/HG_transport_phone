@@ -160,7 +160,6 @@ class HistoryOrderFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListene
         if (pageValue != 0)
             params["type"] = pageValue
         params["token"] = MyApplication.token!!
-        Log.i("requestParam", params.toString())
         API_ORDER.httpPost(getRequestParams(Gson().toJson(params))) { statusCode, body ->
             Log.i("response_order$pageValue", body)
             cancelRefreshAnimation(swipeRefreshLayout)

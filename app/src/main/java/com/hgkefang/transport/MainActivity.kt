@@ -9,6 +9,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.support.v4.content.ContextCompat
@@ -55,7 +56,7 @@ class MainActivity : BaseActivity(), View.OnClickListener {
         return R.layout.activity_main
     }
 
-    override fun initialize() {
+    override fun initialize(savedInstanceState: Bundle?) {
         ivPageBack.visibility = View.GONE
         ivScanning.visibility = View.VISIBLE
         flSendLinen.setOnClickListener(this)
@@ -64,6 +65,7 @@ class MainActivity : BaseActivity(), View.OnClickListener {
         flRewashLinen.setOnClickListener(this)
         ivPrinter.setOnClickListener(this)
         ivScanning.setOnClickListener(this)
+        tvSignOut.setOnClickListener(this)
 //        checkIsMaturity()
         tvPageTitle.text = MyApplication.retData?.tradition_hotel_name
         connectBle()
@@ -166,12 +168,18 @@ class MainActivity : BaseActivity(), View.OnClickListener {
             R.id.ivPrinter ->
                 startActivity(Intent(this@MainActivity, HistoryOrderActivity::class.java))
             R.id.ivScanning -> {
-                val intent = Intent(this@MainActivity, HotelActivity::class.java)
+                val intent = Intent(this@MainActivity, ProxyActivity::class.java)
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 startActivity(intent)
                 finish()
             }
-
+            R.id.tvSignOut -> {
+                MyApplication.token = null
+                SPUtils.getInstance(Activity.MODE_PRIVATE).remove("token")
+                val intent = Intent(this@MainActivity, LoginActivity::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                startActivity(intent)
+            }
         }
     }
 

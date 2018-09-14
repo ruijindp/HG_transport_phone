@@ -105,6 +105,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
+                        android:visibility="gone"
                         android:text="@string/category_name_"
                         android:textColor="@color/black_15"
                         android:textSize="13sp"

@@ -7,6 +7,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.AdapterView
@@ -32,7 +33,7 @@ class BluetoothActivity : BaseActivity() {
         return R.layout.activity_bluetooth
     }
 
-    override fun initialize() {
+    override fun initialize(savedInstanceState: Bundle?) {
         tvPageTitle.text = getString(R.string.scanning)
         ivPageBack.setOnClickListener {
             if (mBluetoothAdapter != null) {

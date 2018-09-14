@@ -1,6 +1,7 @@
 package com.hgkefang.transport
 
 import android.content.Intent
+import android.os.Bundle
 import kotlinx.android.synthetic.main.activity_success.*
 
 /**
@@ -13,7 +14,7 @@ class SuccessActivity : BaseActivity() {
         return R.layout.activity_success
     }
 
-    override fun initialize() {
+    override fun initialize(savedInstanceState: Bundle?) {
         tvLinenCount.text = String.format(getString(R.string.commit_count), intent.getIntExtra("totalLinen", -1))
         tvBackMain.setOnClickListener {
             val intent = Intent(this@SuccessActivity, MainActivity::class.java)

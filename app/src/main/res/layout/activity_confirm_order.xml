@@ -31,6 +31,7 @@
         android:paddingEnd="14dp"
         android:paddingStart="14dp"
         android:text="@string/category_name_"
+        android:visibility="gone"
         android:textColor="@color/black_a31b"
         android:textSize="12sp"
         android:textStyle="bold"/>

@@ -19,3 +19,5 @@ const val API_COMMIT_ORDER = "$ROOT_URL/tradition_submitorder.json"
 const val API_HOTEL_INFO = "$ROOT_URL/tradition_get_hotel.json"
 //订单
 const val API_ORDER = "$ROOT_URL/tradition_get_order.json"
+//二维码参数提交
+const val API_ZXING = "$ROOT_URL/tradition_send_ewm.json"

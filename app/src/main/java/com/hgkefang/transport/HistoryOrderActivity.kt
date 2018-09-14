@@ -1,5 +1,6 @@
 package com.hgkefang.transport
 
+import android.os.Bundle
 import android.view.View
 import com.hgkefang.transport.adapter.OrderPageAdapter
 import kotlinx.android.synthetic.main.activity_history_order.*
@@ -14,7 +15,7 @@ class HistoryOrderActivity : BaseActivity(), View.OnClickListener {
         return R.layout.activity_history_order
     }
 
-    override fun initialize() {
+    override fun initialize(savedInstanceState: Bundle?) {
         tvPageTitle.text = getString(R.string.order)
         viewPager.adapter = OrderPageAdapter(supportFragmentManager)
         tabLayout.setupWithViewPager(viewPager)

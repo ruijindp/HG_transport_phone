@@ -1,9 +1,9 @@
 package com.hgkefang.transport
 
 import android.content.Intent
+import android.os.Bundle
 import android.util.Log
 import android.view.View
-import com.blankj.utilcode.util.ToastUtils
 import com.bronze.kutil.httpPost
 import com.google.gson.Gson
 import com.hgkefang.transport.app.MyApplication
@@ -28,11 +28,15 @@ class HotelActivity : BaseActivity(), View.OnClickListener, NamedEntityPopup.Ent
         return R.layout.activity_hotel
     }
 
-    override fun initialize() {
+    override fun initialize(savedInstanceState: Bundle?) {
+        MyApplication.retData = null
         refreshData()
         lnHotel.setOnClickListener(this)
         tvConfirm.setOnClickListener {
             doLogin()
+        }
+        tvSearch.setOnClickListener {
+            refreshData()
         }
     }
 
@@ -48,7 +52,7 @@ class HotelActivity : BaseActivity(), View.OnClickListener, NamedEntityPopup.Ent
     }
 
     override fun selectStringAt(popup: NamedEntityPopup, index: Int) {
-        when(popup.lastAnchor!!.id){
+        when (popup.lastAnchor!!.id) {
             R.id.lnHotel -> {
                 tvHotel.text = results[index].tradition_hotel_name
                 MyApplication.retData = results[index]
@@ -65,6 +69,7 @@ class HotelActivity : BaseActivity(), View.OnClickListener, NamedEntityPopup.Ent
             Log.i("response_hotel", body)
             dismissDialog()
             if (statusCode != 200) {
+                toast("网络错误：$statusCode")
                 return@httpPost
             }
             Gson().fromJson<CommonResult>(body, CommonResult::class.java).let {
@@ -82,12 +87,18 @@ class HotelActivity : BaseActivity(), View.OnClickListener, NamedEntityPopup.Ent
     }
 
     private fun doLogin() {
-        if (MyApplication.retData == null){
+        if (MyApplication.retData == null) {
             toast("还没有选择酒店")
             return
         }
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
+        finish()
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        ProxyActivity.isFinish = true
         finish()
     }
 }

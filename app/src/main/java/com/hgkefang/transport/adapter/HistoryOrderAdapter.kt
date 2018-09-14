@@ -43,6 +43,7 @@ class HistoryOrderAdapter(private val pageValue: Int,
             } else {
                 holder.tvLeftValue.text = String.format("%s - %s", it.tradition_wash_name, it.tradition_hotel_name)
             }
+            holder.tvMiddleValue.text = it.tradition_hotel_name
             var totalCount = 0
             if (it.tradition_data.contains("|")) {
                 it.tradition_data.split("|").map {

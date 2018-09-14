@@ -29,18 +29,23 @@ import java.util.*
 abstract class BaseActivity : AppCompatActivity() {
 
     private lateinit var loadingDialog: Dialog
+    protected var hasNeedFitWindow = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(getLayoutID())
-        ImmersionBar.with(this).fitsSystemWindows(true).statusBarDarkFont(true).init()
 
-        initialize()
+        initialize(savedInstanceState)
+        if (!hasNeedFitWindow){
+            ImmersionBar.with(this).fitsSystemWindows(true).statusBarDarkFont(true).init()
+        } else{
+            ImmersionBar.with(this).init()
+        }
     }
 
     abstract fun getLayoutID(): Int
 
-    abstract fun initialize()
+    abstract fun initialize(savedInstanceState: Bundle?)
 
     protected fun initSwipeRefreshLayout(swipeRefreshLayout: SwipeRefreshLayout) {
         swipeRefreshLayout.setColorSchemeColors(ContextCompat.getColor(this, R.color.colorAccent))
@@ -106,6 +111,7 @@ abstract class BaseActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
+        hasNeedFitWindow = false
         ImmersionBar.with(this).destroy()
     }
 }

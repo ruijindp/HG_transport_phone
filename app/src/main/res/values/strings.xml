@@ -9,6 +9,7 @@
     <string name="pollution">严重污染</string>
     <string name="rewash_linen">货品反洗</string>
     <string name="entry_permission">*录入权限</string>
+    <string name="sign_out">退出登录</string>
     <string name="clean_cloth">CLEAN CLOTH</string>
     <string name="dirty_cloth">DIRTY CLOTH</string>
     <string name="printed_note">PRINTED NOTE</string>
@@ -20,7 +21,7 @@
     <string name="linen_trend">布草动向</string>
     <string name="linen_trend_">布草动向：</string>
     <string name="category_name">分级名称</string>
-    <string name="category_name_">分级名称：一楼布草间</string>
+    <string name="category_name_">分级名称：</string>
     <string name="count">数量</string>
     <string name="order_info">订单信息</string>
     <string name="order_num">订单号：</string>
@@ -34,6 +35,7 @@
     <string name="total_linen">共%s套布草</string>
     <string name="order_detail">订单详情</string>
     <string name="select_hotel">选择酒店名称</string>
+    <string name="hotel_name">酒店名称</string>
     <string name="sure">确定</string>
     <string name="principal">负责人：</string>
     <string name="confirm_order">确认订单</string>
@@ -49,6 +51,8 @@
     <string name="maturity_date">您的洗涤录入还有%s天到期，\n为了不影响使用请尽快续费</string>
     <string name="linen">布草</string>
     <string name="shoe">拖鞋</string>
+    <string name="search">搜索</string>
+    <string name="select_hotel_">手动选择酒店</string>
 
     <string name="digits_number">0123456789</string>
     <string name="hint_number">输入数量</string>

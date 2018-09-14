@@ -9,6 +9,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.hardware.usb.UsbManager.ACTION_USB_DEVICE_DETACHED
+import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.text.TextUtils
@@ -67,7 +68,7 @@ class OrderDetailActivity : BaseActivity(), View.OnClickListener {
         }
 
     private lateinit var typeList: ArrayList<String>
-    override fun initialize() {
+    override fun initialize(savedInstanceState: Bundle?) {
         tvPageTitle.text = getString(R.string.order_detail)
         retData = intent.getSerializableExtra("retData") as RetData
         val pageValue = pageValue
@@ -79,6 +80,10 @@ class OrderDetailActivity : BaseActivity(), View.OnClickListener {
             typeList.add(retData!!.tradition_data)
         }
 
+        if(!MyApplication.retData?.floor_name.isNullOrEmpty()){
+            tvCategory.visibility = View.VISIBLE
+            tvCategory.text = String.format("%s%s", getString(R.string.category_name_), MyApplication.retData?.floor_name)
+        }
         tvPrincipal.text = String.format("%s%s", getString(R.string.principal), MyApplication.name)
         if (pageValue == 1) {
             tvLinenTrend.text = String.format("%s%s - %s", getString(R.string.linen_trend_), retData!!.tradition_hotel_name, retData!!.tradition_wash_name)
