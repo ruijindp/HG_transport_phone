@@ -21,3 +21,6 @@ const val API_HOTEL_INFO = "$ROOT_URL/tradition_get_hotel.json"
 const val API_ORDER = "$ROOT_URL/tradition_get_order.json"
 //二维码参数提交
 const val API_ZXING = "$ROOT_URL/tradition_send_ewm.json"
+//初始化接口
+const val API_UPDATE = "$ROOT_URL/init/execute"
+

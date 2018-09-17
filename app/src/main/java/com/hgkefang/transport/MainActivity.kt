@@ -29,15 +29,20 @@ import com.google.gson.Gson
 import com.hgkefang.transport.app.MyApplication
 import com.hgkefang.transport.entity.ObjectResult
 import com.hgkefang.transport.net.API_CHECK_EXPIRE
+import com.hgkefang.transport.net.API_UPDATE
 import com.hgkefang.transport.util.DeviceConnFactoryManager
+import com.hgkefang.transport.util.DownloadManagerUtil
 import com.hgkefang.transport.util.ThreadPool
 import com.hgkefang.transport.util.TimeUtil
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_order_detail.*
 import kotlinx.android.synthetic.main.view_title.*
 import org.jetbrains.anko.toast
+import java.net.URL
+import java.net.URLDecoder
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.LinkedHashMap
 
 class MainActivity : BaseActivity(), View.OnClickListener {
 
@@ -51,6 +56,7 @@ class MainActivity : BaseActivity(), View.OnClickListener {
     private val id = 1
     private var threadPool: ThreadPool? = null
     private val spUtils = SPUtils.getInstance(Activity.MODE_PRIVATE)
+    private var downloadId:Long = 0
 
     override fun getLayoutID(): Int {
         return R.layout.activity_main
@@ -69,6 +75,8 @@ class MainActivity : BaseActivity(), View.OnClickListener {
 //        checkIsMaturity()
         tvPageTitle.text = MyApplication.retData?.tradition_hotel_name
         connectBle()
+
+        checkVersion()
     }
 
     private fun connectBle() {
@@ -179,6 +187,33 @@ class MainActivity : BaseActivity(), View.OnClickListener {
                 val intent = Intent(this@MainActivity, LoginActivity::class.java)
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 startActivity(intent)
+            }
+        }
+    }
+
+    private fun checkVersion() {
+        val params = LinkedHashMap<String, Any?>()
+        params["token"] = MyApplication.token
+        API_UPDATE.httpPost(getRequestParams(Gson().toJson(params))) { statusCode, body ->
+            Log.i("response_update", body)
+            if (statusCode != 200){
+                return@httpPost
+            }
+            Gson().fromJson<ObjectResult>(body, ObjectResult::class.java).let {
+                if (it.errMsg.code == 301){
+                    tokenInvalid()
+                    return@httpPost
+                }
+                if (it.errMsg.code != 200){
+                    toast(it.message)
+                    return@httpPost
+                }
+                val downloadManagerUtil = DownloadManagerUtil(this@MainActivity)
+                if (downloadId != 0L){
+                    downloadManagerUtil.clearCurrentTask(downloadId)
+                }
+                val url = URLDecoder.decode(it.retData.version.url, "UTF-8")
+                downloadId = downloadManagerUtil.download(url, getString(R.string.app_name), "下载完成后，点击安装")
             }
         }
     }

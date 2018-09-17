@@ -112,24 +112,6 @@ class ProxyActivity : BaseActivity() {
         captureManager.onDestroy()
     }
 
-//    override fun onStart() {
-//        super.onStart()
-//        EventBus.getDefault().register(this)
-//    }
-//
-//    override fun onStop() {
-//        super.onStop()
-//        EventBus.getDefault().unregister(this)
-//    }
-//
-//    @Subscribe(threadMode = ThreadMode.MAIN)
-//    fun onMessageEvent(event: FinishEvent) {
-//        toast(event.isFinish.toString())
-//        if (event.isFinish){
-//            finish()
-//        }
-//    }
-
     override fun onSaveInstanceState(outState: Bundle?) {
         super.onSaveInstanceState(outState)
         captureManager.onSaveInstanceState(outState)

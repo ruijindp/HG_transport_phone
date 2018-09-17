@@ -49,7 +49,9 @@ data class RetData(
         val tradition_order_type: String,
         val tradition_wash_name: String,
 
-        val slipper: Int
+        val slipper: Int,
+
+        val version: Version
 ) : Serializable
 
 data class Son(
@@ -57,4 +59,11 @@ data class Son(
         val tradition_name: String,
         val tradition_pid: String,
         val tradition_spec: String
+)
+
+data class Version(
+    val code: String,
+    val name: String,
+    val url: String,
+    val content: String
 )
