@@ -4,7 +4,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
-import android.view.KeyEvent
 import android.view.View
 import com.bronze.kutil.httpPost
 import com.google.gson.Gson
@@ -12,7 +11,6 @@ import com.google.zxing.integration.android.IntentIntegrator
 import com.hgkefang.transport.app.MyApplication
 import com.hgkefang.transport.entity.ObjectResult
 import com.hgkefang.transport.net.API_ZXING
-import com.journeyapps.barcodescanner.CaptureManager
 import kotlinx.android.synthetic.main.activity_scanning.*
 import org.jetbrains.anko.toast
 
@@ -25,8 +23,6 @@ class ProxyActivity : BaseActivity() {
         var isFinish = false
     }
 
-    private lateinit var captureManager: CaptureManager
-
     override fun getLayoutID(): Int {
         return R.layout.activity_scanning
     }
@@ -37,20 +33,11 @@ class ProxyActivity : BaseActivity() {
 
         if (!hasFlash()) {
             ivFlash.visibility = View.GONE
-        } else{
+        } else {
             ivFlash.visibility = View.VISIBLE
         }
 
-        captureManager = CaptureManager(this, barcodeView)
-        captureManager.initializeFromIntent(intent, savedInstanceState)
-        captureManager.decode()
-        IntentIntegrator(this)
-                .setCaptureActivity(ScanningActivity::class.java)
-                .setDesiredBarcodeFormats(IntentIntegrator.ALL_CODE_TYPES)
-                .setPrompt("请对准需要识别酒店的二维码")
-                .setCameraId(0)
-                .setBeepEnabled(true)
-                .initiateScan()
+        startScanning()
     }
 
     private fun hasFlash(): Boolean {
@@ -59,7 +46,9 @@ class ProxyActivity : BaseActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         val result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
-        if (result.contents == null) {
+        if (result.contents.isNullOrEmpty()) {
+            toast("无法识别的内容")
+            startScanning()
             return
         }
         commitData(result.contents)
@@ -70,11 +59,18 @@ class ProxyActivity : BaseActivity() {
         val params = LinkedHashMap<String, Any?>()
         params["code"] = content
         params["token"] = MyApplication.token
+        Log.i("doScanning", params.toString())
         API_ZXING.httpPost(getRequestParams(Gson().toJson(params))) { statusCode, body ->
-            Log.i("doScanning", body)
+            Log.i("response_scanning", body)
             dismissDialog()
             if (statusCode != 200) {
+                startScanning()
                 toast("网络错误：$statusCode")
+                return@httpPost
+            }
+            if (isJsonArrayType(body)){
+                startScanning()
+                toast(getJsonMessage(body))
                 return@httpPost
             }
             Gson().fromJson<ObjectResult>(body, ObjectResult::class.java).let {
@@ -84,6 +80,7 @@ class ProxyActivity : BaseActivity() {
                 }
                 if (it.errMsg.code != 200) {
                     toast(it.message)
+                    startScanning()
                     return@httpPost
                 }
                 MyApplication.retData = it.retData
@@ -93,35 +90,21 @@ class ProxyActivity : BaseActivity() {
         }
     }
 
+    private fun startScanning() {
+        IntentIntegrator(this)
+                .setCaptureActivity(ScanningActivity::class.java)
+                .setDesiredBarcodeFormats(IntentIntegrator.ALL_CODE_TYPES)
+                .setPrompt("请对准需要识别酒店的二维码")
+                .setCameraId(0)
+                .setBeepEnabled(true)
+                .initiateScan()
+    }
+
     override fun onResume() {
         super.onResume()
-        captureManager.onResume()
         if (isFinish) {
             isFinish = false
             finish()
         }
-    }
-
-    override fun onPause() {
-        super.onPause()
-        captureManager.onPause()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        captureManager.onDestroy()
-    }
-
-    override fun onSaveInstanceState(outState: Bundle?) {
-        super.onSaveInstanceState(outState)
-        captureManager.onSaveInstanceState(outState)
-    }
-
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        captureManager.onRequestPermissionsResult(requestCode, permissions, grantResults)
-    }
-
-    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-        return barcodeView.onKeyDown(keyCode, event) || super.onKeyDown(keyCode, event)
     }
 }

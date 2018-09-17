@@ -9,7 +9,6 @@ import android.view.View
 import com.blankj.utilcode.util.SPUtils
 import com.bronze.kutil.httpPost
 import com.google.gson.Gson
-import com.gyf.barlibrary.ImmersionBar
 import com.hgkefang.transport.app.MyApplication
 import com.hgkefang.transport.entity.ObjectResult
 import com.hgkefang.transport.net.API_LOGIN
@@ -63,6 +62,10 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
             dismissDialog()
             if (statusCode != 200){
                 toast("网络错误：$statusCode")
+                return@httpPost
+            }
+            if (isJsonArrayType(body)){
+                toast(getJsonMessage(body))
                 return@httpPost
             }
             Gson().fromJson<ObjectResult>(body, ObjectResult::class.java).let {

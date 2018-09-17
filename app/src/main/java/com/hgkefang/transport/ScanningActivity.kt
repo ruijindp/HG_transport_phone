@@ -33,7 +33,6 @@ class ScanningActivity : BaseActivity(), View.OnClickListener {
             val intent = Intent(this, HotelActivity::class.java)
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
             startActivity(intent)
-            ProxyActivity.isFinish = true
             finish()
         }
         captureManager = CaptureManager(this, barcodeView)

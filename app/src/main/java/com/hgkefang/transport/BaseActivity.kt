@@ -18,6 +18,9 @@ import com.hgkefang.transport.net.APP_PORT
 import com.hgkefang.transport.util.AESUtil
 import com.hgkefang.transport.util.SecretUtil
 import org.jetbrains.anko.toast
+import org.json.JSONArray
+import org.json.JSONObject
+import org.json.JSONTokener
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
@@ -36,9 +39,9 @@ abstract class BaseActivity : AppCompatActivity() {
         setContentView(getLayoutID())
 
         initialize(savedInstanceState)
-        if (!hasNeedFitWindow){
+        if (!hasNeedFitWindow) {
             ImmersionBar.with(this).fitsSystemWindows(true).statusBarDarkFont(true).init()
-        } else{
+        } else {
             ImmersionBar.with(this).init()
         }
     }
@@ -113,5 +116,17 @@ abstract class BaseActivity : AppCompatActivity() {
         super.onDestroy()
         hasNeedFitWindow = false
         ImmersionBar.with(this).destroy()
+    }
+
+    //判断是数组还是对象
+    protected fun isJsonArrayType(json: String?): Boolean {
+        val jsonObject = JSONObject(json)
+        val retData = JSONTokener(jsonObject.getString("retData")).nextValue()
+        return retData is JSONArray
+    }
+
+    protected fun getJsonMessage(json: String?): String{
+        val jsonObject = JSONObject(json)
+        return jsonObject.getString("message")
     }
 }

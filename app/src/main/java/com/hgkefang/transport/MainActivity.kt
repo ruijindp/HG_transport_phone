@@ -38,7 +38,6 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_order_detail.*
 import kotlinx.android.synthetic.main.view_title.*
 import org.jetbrains.anko.toast
-import java.net.URL
 import java.net.URLDecoder
 import java.text.SimpleDateFormat
 import java.util.*
@@ -76,7 +75,7 @@ class MainActivity : BaseActivity(), View.OnClickListener {
         tvPageTitle.text = MyApplication.retData?.tradition_hotel_name
         connectBle()
 
-        checkVersion()
+//        checkVersion()
     }
 
     private fun connectBle() {
@@ -116,6 +115,10 @@ class MainActivity : BaseActivity(), View.OnClickListener {
             dismissDialog()
             if (statusCode != 200) {
                 toast("网络错误：$statusCode")
+                return@httpPost
+            }
+            if (isJsonArrayType(body)){
+                toast(getJsonMessage(body))
                 return@httpPost
             }
             Gson().fromJson<ObjectResult>(body, ObjectResult::class.java).let {
@@ -197,6 +200,10 @@ class MainActivity : BaseActivity(), View.OnClickListener {
         API_UPDATE.httpPost(getRequestParams(Gson().toJson(params))) { statusCode, body ->
             Log.i("response_update", body)
             if (statusCode != 200){
+                return@httpPost
+            }
+            if (isJsonArrayType(body)){
+                toast(getJsonMessage(body))
                 return@httpPost
             }
             Gson().fromJson<ObjectResult>(body, ObjectResult::class.java).let {

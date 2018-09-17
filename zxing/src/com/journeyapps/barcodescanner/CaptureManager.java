@@ -397,15 +397,6 @@ public class CaptureManager {
         Intent intent = resultIntent(rawResult, getBarcodeImagePath(rawResult));
         activity.setResult(Activity.RESULT_OK, intent);
         closeAndFinish();
-
-//        if (barcodeView.getBarcodeView().isCameraClosed()) {
-////            finish();
-//        } else {
-//            finishWhenClosed = true;
-//        }
-//
-//        barcodeView.pause();
-//        inactivityTimer.cancel();
     }
 
     protected void displayFrameworkBugMessageAndExit() {

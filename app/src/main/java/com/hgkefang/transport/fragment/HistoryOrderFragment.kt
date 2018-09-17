@@ -155,11 +155,12 @@ class HistoryOrderFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListene
             }
         }
         isLoading = true
-        val params = LinkedHashMap<String, Any>()
+        val params = LinkedHashMap<String, Any?>()
         params["page"] = currentPage
+        params["hotel_id"] = MyApplication.retData?.id
         if (pageValue != 0)
             params["type"] = pageValue
-        params["token"] = MyApplication.token!!
+        params["token"] = MyApplication.token
         API_ORDER.httpPost(getRequestParams(Gson().toJson(params))) { statusCode, body ->
             Log.i("response_order$pageValue", body)
             cancelRefreshAnimation(swipeRefreshLayout)

@@ -22,6 +22,9 @@ import com.hgkefang.transport.net.APP_PORT
 import com.hgkefang.transport.util.AESUtil
 import com.hgkefang.transport.util.SecretUtil
 import org.jetbrains.anko.support.v4.toast
+import org.json.JSONArray
+import org.json.JSONObject
+import org.json.JSONTokener
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
@@ -108,5 +111,19 @@ abstract class BaseFragment : Fragment() {
         val intent = Intent(requireActivity(), LoginActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         startActivity(intent)
+    }
+
+    protected fun isJsonArrayType(json: String?): Boolean {
+        val jsonObject = JSONObject(json)
+        val retData = JSONTokener(jsonObject.getString("retData")).nextValue()
+        if (retData is JSONArray) {
+            return true
+        }
+        return false
+    }
+
+    protected fun getJsonMessage(json: String?): String{
+        val jsonObject = JSONObject(json)
+        return jsonObject.getString("message")
     }
 }

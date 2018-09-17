@@ -2,13 +2,11 @@ package com.hgkefang.transport
 
 import android.content.Intent
 import android.os.Bundle
-import android.text.TextUtils
 import android.util.Log
 import android.view.View
 import com.bronze.kutil.httpPost
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.google.zxing.common.StringUtils
 import com.hgkefang.transport.adapter.ConfirmOrderAdapter
 import com.hgkefang.transport.app.MyApplication
 import com.hgkefang.transport.entity.CommonResult
@@ -39,7 +37,7 @@ class ConfirmOrderActivity : BaseActivity(), View.OnClickListener {
 
     override fun initialize(savedInstanceState: Bundle?) {
         tvPageTitle.text = getString(R.string.confirm_order)
-        if(!MyApplication.retData?.floor_name.isNullOrEmpty()){
+        if (!MyApplication.retData?.floor_name.isNullOrEmpty()) {
             tvCategory.visibility = View.VISIBLE
             tvCategory.text = String.format("%s%s", getString(R.string.category_name_), MyApplication.retData?.floor_name)
         }
@@ -81,7 +79,7 @@ class ConfirmOrderActivity : BaseActivity(), View.OnClickListener {
             sb.append("${it.son.id}-${it.count}|")
         }
         params["data"] = sb.toString().substring(0, sb.length - 1)
-        if(MyApplication.retData?.floor_name != null){
+        if (MyApplication.retData?.floor_name != null) {
             params["floor"] = MyApplication.retData?.floor_name
         }
         params["hotel_id"] = MyApplication.retData!!.id
