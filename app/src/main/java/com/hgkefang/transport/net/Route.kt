@@ -2,8 +2,8 @@ package com.hgkefang.transport.net
 
 const val APP_PORT = "transport"
 
-private const val ROOT_URL = "http://test.api.v5.hgkefang.com" //测试
-//private const val ROOT_URL = "http://api.v5.hgkefang.com"    //正式
+//private const val ROOT_URL = "http://test.api.v5.hgkefang.com" //测试
+private const val ROOT_URL = "http://api.v5.hgkefang.com"    //正式
 
 //登录
 const val API_LOGIN = "$ROOT_URL/user-login.json"

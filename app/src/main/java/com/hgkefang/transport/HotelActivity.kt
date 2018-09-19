@@ -66,6 +66,10 @@ class HotelActivity : BaseActivity(), View.OnClickListener, NamedEntityPopup.Ent
         params["hotel_name"] = etHotel.text.toString()
         params["token"] = MyApplication.token
         API_HOTEL_INFO.httpPost(getRequestParams(Gson().toJson(params))) { statusCode, body ->
+            if(body.isNullOrEmpty()){
+                toast("网络错误：$statusCode")
+                return@httpPost
+            }
             Log.i("response_hotel", body)
             dismissDialog()
             if (statusCode != 200) {
@@ -96,9 +100,9 @@ class HotelActivity : BaseActivity(), View.OnClickListener, NamedEntityPopup.Ent
         finish()
     }
 
-    override fun onBackPressed() {
-        super.onBackPressed()
-        ProxyActivity.isFinish = true
-        finish()
-    }
+//    override fun onBackPressed() {
+//        super.onBackPressed()
+//        ProxyActivity.isFinish = true
+//        finish()
+//    }
 }

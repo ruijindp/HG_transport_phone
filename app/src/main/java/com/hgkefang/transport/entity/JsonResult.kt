@@ -51,7 +51,7 @@ data class RetData(
 
         val slipper: Int,
 
-        val version: Version
+        val app_version: Version
 ) : Serializable
 
 data class Son(

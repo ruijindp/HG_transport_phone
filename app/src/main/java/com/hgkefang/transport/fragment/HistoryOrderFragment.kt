@@ -111,6 +111,7 @@ class HistoryOrderFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListene
     }
 
     private fun connectBle() {
+        if(BluetoothAdapter.getDefaultAdapter() == null) return
         if (!BluetoothAdapter.getDefaultAdapter().isEnabled) {
             return
         }

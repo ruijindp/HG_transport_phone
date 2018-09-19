@@ -20,6 +20,7 @@ import android.view.Display;
 import android.view.Surface;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import com.google.zxing.ResultMetadataType;
 import com.google.zxing.ResultPoint;
@@ -394,10 +395,29 @@ public class CaptureManager {
     }
 
     protected void returnResult(BarcodeResult rawResult) {
-        Intent intent = resultIntent(rawResult, getBarcodeImagePath(rawResult));
-        activity.setResult(Activity.RESULT_OK, intent);
-        closeAndFinish();
+//        Intent intent = resultIntent(rawResult, getBarcodeImagePath(rawResult));
+//        activity.setResult(Activity.RESULT_OK, intent);
+//        closeAndFinish();
+        if (callBack != null) {
+            callBack.callBack(rawResult);
+        }
+        barcodeView.pause();
+        inactivityTimer.cancel();
+
+        onResume();
+
+        decode();
     }
+
+    private ScanningCallBack callBack;
+    public void setCallbackListener(ScanningCallBack callBack){
+        this.callBack = callBack;
+    }
+
+    public interface ScanningCallBack{
+        void callBack(BarcodeResult rawResult);
+    }
+
 
     protected void displayFrameworkBugMessageAndExit() {
         if (activity.isFinishing() || this.destroyed || finishWhenClosed) {

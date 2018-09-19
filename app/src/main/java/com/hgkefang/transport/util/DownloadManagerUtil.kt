@@ -14,14 +14,16 @@ class DownloadManagerUtil(private val context: Context) {
     fun download(url: String, title: String, desc: String): Long {
         val uri = Uri.parse(url)
         val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
-        return downloadManager.enqueue(DownloadManager.Request(uri).let {
-            it.setAllowedNetworkTypes(DownloadManager.PAUSED_QUEUED_FOR_WIFI)
-            it.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-            it.setDestinationInExternalFilesDir(context, Environment.DIRECTORY_DOWNLOADS, title)
-            it.setTitle(title)
-            it.setDescription(desc)
-            it.setMimeType("application/vnd.android.package-archive")
-        })
+        val request = DownloadManager.Request(uri)
+        request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI)
+        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)
+        request.setAllowedOverRoaming(false)
+        request.setVisibleInDownloadsUi(true)
+        request.setDestinationInExternalFilesDir(context, Environment.DIRECTORY_DOWNLOADS, title)
+        request.setTitle(title)
+        request.setDescription(desc)
+        request.setMimeType("application/vnd.android.package-archive")
+        return downloadManager.enqueue(request)
     }
 
     /**
@@ -30,5 +32,22 @@ class DownloadManagerUtil(private val context: Context) {
     fun clearCurrentTask(downloadId: Long) {
         val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
         downloadManager.remove(downloadId)
+    }
+
+    /**
+     * 获取下载进度
+     */
+    fun getDownloadPercent(downloadId: Long):Int{
+        val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+        val query = DownloadManager.Query().setFilterById(downloadId)
+        val cursor = downloadManager.query(query)
+        if (cursor.moveToFirst()){
+            val downloadBytesIdx = cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR)
+            val totalBytesIdx = cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_TOTAL_SIZE_BYTES)
+            val totalBytes = cursor.getLong(totalBytesIdx)
+            val downloadBytes = cursor.getLong(downloadBytesIdx)
+            return (downloadBytes * 100 / totalBytes).toInt()
+        }
+        return 0
     }
 }

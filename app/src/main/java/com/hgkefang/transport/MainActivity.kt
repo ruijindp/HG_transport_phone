@@ -3,16 +3,21 @@ package com.hgkefang.transport
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Dialog
+import android.app.DownloadManager
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.provider.Settings
 import android.support.v4.content.ContextCompat
+import android.support.v4.content.FileProvider
 import android.text.SpannableString
 import android.text.Spanned
 import android.text.TextUtils
@@ -21,19 +26,17 @@ import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
-import com.blankj.utilcode.util.SPUtils
-import com.blankj.utilcode.util.TimeUtils
-import com.blankj.utilcode.util.ToastUtils
+import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.Theme
+import com.blankj.utilcode.util.*
 import com.bronze.kutil.httpPost
 import com.google.gson.Gson
 import com.hgkefang.transport.app.MyApplication
 import com.hgkefang.transport.entity.ObjectResult
+import com.hgkefang.transport.entity.Version
 import com.hgkefang.transport.net.API_CHECK_EXPIRE
 import com.hgkefang.transport.net.API_UPDATE
-import com.hgkefang.transport.util.DeviceConnFactoryManager
-import com.hgkefang.transport.util.DownloadManagerUtil
-import com.hgkefang.transport.util.ThreadPool
-import com.hgkefang.transport.util.TimeUtil
+import com.hgkefang.transport.util.*
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_order_detail.*
 import kotlinx.android.synthetic.main.view_title.*
@@ -51,11 +54,13 @@ class MainActivity : BaseActivity(), View.OnClickListener {
     private val CONN_STATE_FAILED = CONN_STATE_DISCONNECT shl 2
     private val CONN_PRINTER = 0x12
     private val MESSAGE_UPDATE_PARAMETER = 0x009
+    private val REQUEST_PERMISSION = 0x123
 
     private val id = 1
     private var threadPool: ThreadPool? = null
     private val spUtils = SPUtils.getInstance(Activity.MODE_PRIVATE)
-    private var downloadId:Long = 0
+    private var downloadId: Long = 0
+    private lateinit var downloadReceiver: DownloadReceiver
 
     override fun getLayoutID(): Int {
         return R.layout.activity_main
@@ -71,14 +76,37 @@ class MainActivity : BaseActivity(), View.OnClickListener {
         ivPrinter.setOnClickListener(this)
         ivScanning.setOnClickListener(this)
         tvSignOut.setOnClickListener(this)
-//        checkIsMaturity()
+        checkIsMaturity()
         tvPageTitle.text = MyApplication.retData?.tradition_hotel_name
         connectBle()
 
-//        checkVersion()
+        checkVersion()
+
+        downloadReceiver = DownloadReceiver(this@MainActivity)
+        val intentFilter = IntentFilter()
+        intentFilter.addAction(DownloadManager.ACTION_NOTIFICATION_CLICKED)
+        intentFilter.addAction(DownloadManager.ACTION_DOWNLOAD_COMPLETE)
+        registerReceiver(downloadReceiver, intentFilter)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (resultCode == RESULT_OK && requestCode == REQUEST_PERMISSION) {
+            val file = FileUtils.getFileByPath(apkPath?.replace("file://", ""))
+            val apkUri = FileProvider.getUriForFile(this, "$packageName.provider", file)
+            val install = Intent(Intent.ACTION_VIEW)
+            install.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            install.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            install.setDataAndType(apkUri, "application/vnd.android.package-archive")
+            startActivity(install)
+        } else {
+            toast("未允许未知来源，安装失败")
+        }
     }
 
     private fun connectBle() {
+        if (BluetoothAdapter.getDefaultAdapter() == null) {
+            return
+        }
         if (!BluetoothAdapter.getDefaultAdapter().isEnabled) {
             return
         }
@@ -117,7 +145,7 @@ class MainActivity : BaseActivity(), View.OnClickListener {
                 toast("网络错误：$statusCode")
                 return@httpPost
             }
-            if (isJsonArrayType(body)){
+            if (isJsonArrayType(body)) {
                 toast(getJsonMessage(body))
                 return@httpPost
             }
@@ -179,7 +207,7 @@ class MainActivity : BaseActivity(), View.OnClickListener {
             R.id.ivPrinter ->
                 startActivity(Intent(this@MainActivity, HistoryOrderActivity::class.java))
             R.id.ivScanning -> {
-                val intent = Intent(this@MainActivity, ProxyActivity::class.java)
+                val intent = Intent(this@MainActivity, ScanningActivity::class.java)
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 startActivity(intent)
                 finish()
@@ -199,30 +227,45 @@ class MainActivity : BaseActivity(), View.OnClickListener {
         params["token"] = MyApplication.token
         API_UPDATE.httpPost(getRequestParams(Gson().toJson(params))) { statusCode, body ->
             Log.i("response_update", body)
-            if (statusCode != 200){
+            if (statusCode != 200) {
                 return@httpPost
             }
-            if (isJsonArrayType(body)){
+            if (isJsonArrayType(body)) {
                 toast(getJsonMessage(body))
                 return@httpPost
             }
             Gson().fromJson<ObjectResult>(body, ObjectResult::class.java).let {
-                if (it.errMsg.code == 301){
+                if (it.errMsg.code == 301) {
                     tokenInvalid()
                     return@httpPost
                 }
-                if (it.errMsg.code != 200){
+                if (it.errMsg.code != 200) {
                     toast(it.message)
                     return@httpPost
                 }
-                val downloadManagerUtil = DownloadManagerUtil(this@MainActivity)
-                if (downloadId != 0L){
-                    downloadManagerUtil.clearCurrentTask(downloadId)
+                if (it.retData.app_version.code.toInt() > AppUtils.getAppVersionCode()) {
+                    showUpDateDialog(it.retData.app_version)
                 }
-                val url = URLDecoder.decode(it.retData.version.url, "UTF-8")
-                downloadId = downloadManagerUtil.download(url, getString(R.string.app_name), "下载完成后，点击安装")
             }
         }
+    }
+
+    private fun showUpDateDialog(version: Version) {
+        MaterialDialog.Builder(this)
+                .title(R.string.new_version)
+                .theme(Theme.LIGHT)
+                .cancelable(false)
+                .content(String.format("%s%s", version.content, getString(R.string.update)))
+                .positiveText(android.R.string.ok)
+                .positiveColor(ContextCompat.getColor(this, R.color.colorAccent))
+                .onPositive { _, _ ->
+                    val downloadManagerUtil = DownloadManagerUtil(this@MainActivity)
+                    if (downloadId != 0L) {
+                        downloadManagerUtil.clearCurrentTask(downloadId)
+                    }
+                    val url = URLDecoder.decode(version.url, "UTF-8")
+                    downloadId = downloadManagerUtil.download(url, "transport.apk", "下载中，请保持最新版本")
+                }.show()
     }
 
     override fun onStart() {
@@ -240,6 +283,7 @@ class MainActivity : BaseActivity(), View.OnClickListener {
         if (threadPool != null) {
             threadPool!!.stopThreadPool()
         }
+        unregisterReceiver(downloadReceiver)
     }
 
     private val receiver = object : BroadcastReceiver() {
@@ -299,6 +343,40 @@ class MainActivity : BaseActivity(), View.OnClickListener {
                     threadPool!!.addTask(Runnable { DeviceConnFactoryManager.deviceConnFactoryManagers[id]!!.openPort() })
                 }
             }
+        }
+    }
+
+    private var apkPath: String? = null
+    fun installApk(apkPath: String) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val haveInstallPermission = packageManager.canRequestPackageInstalls()
+            if (!haveInstallPermission) {
+                this.apkPath = apkPath
+                val packageURI = Uri.parse("package:$packageName")
+                val intent = Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, packageURI)
+                startActivityForResult(intent, REQUEST_PERMISSION)
+            } else {
+                val file = FileUtils.getFileByPath(apkPath.replace("file://", ""))
+                val apkUri = FileProvider.getUriForFile(this, "$packageName.provider", file)
+                val install = Intent(Intent.ACTION_VIEW)
+                install.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                install.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                install.setDataAndType(apkUri, "application/vnd.android.package-archive")
+                startActivity(install)
+            }
+        } else if (Build.VERSION.SDK_INT >= 24) {
+            val file = FileUtils.getFileByPath(apkPath.replace("file://", ""))
+            val apkUri = FileProvider.getUriForFile(this, "$packageName.provider", file)
+            val install = Intent(Intent.ACTION_VIEW)
+            install.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            install.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+            install.setDataAndType(apkUri, "application/vnd.android.package-archive")
+            startActivity(install)
+        } else {
+            val install = Intent(Intent.ACTION_VIEW)
+            install.setDataAndType(Uri.parse(apkPath), "application/vnd.android.package-archive")
+            install.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            startActivity(install)
         }
     }
 }

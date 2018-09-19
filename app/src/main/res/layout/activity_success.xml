@@ -79,10 +79,25 @@
             android:textSize="12sp"/>
 
         <TextView
+            android:id="@+id/tvPrinterOrder"
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:layout_weight="1"
+            android:background="@drawable/shape_bg_hotel"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?android:selectableItemBackground"
+            android:gravity="center"
+            android:layout_marginStart="25dp"
+            android:layout_marginEnd="25dp"
+            android:text="@string/printer_order"
+            android:textColor="@color/black_2d"
+            android:textSize="12sp"/>
+
+        <TextView
             android:id="@+id/tvSeeOrder"
             android:layout_width="0dp"
             android:layout_height="30dp"
-            android:layout_marginStart="25dp"
             android:layout_weight="1"
             android:background="@drawable/shape_blue_gradient_corner"
             android:clickable="true"

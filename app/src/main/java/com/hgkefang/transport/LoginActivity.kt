@@ -32,7 +32,7 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
         hasNeedFitWindow = true
         spUtils = SPUtils.getInstance(Activity.MODE_PRIVATE)
         if (!TextUtils.isEmpty(MyApplication.token)) {
-            startActivity(Intent(this, ProxyActivity::class.java))
+            startActivity(Intent(this, ScanningActivity::class.java))
             finish()
             return
         }
@@ -79,7 +79,7 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
                 spUtils.put("name", it.retData.name)
                 spUtils.put("userName", etAccount.text.toString())
                 spUtils.put("password", etPassword.text.toString())
-                startActivity(Intent(this, ProxyActivity::class.java))
+                startActivity(Intent(this, HotelActivity::class.java))
                 finish()
             }
         }

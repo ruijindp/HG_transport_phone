@@ -33,8 +33,8 @@ class MaturityActivity : BaseActivity() {
 
         override fun onFinish() {
             MyApplication.token = null
-            SPUtils.getInstance(Activity.MODE_PRIVATE).clear()
-            val intent = Intent(this@MaturityActivity, HotelActivity::class.java)
+            SPUtils.getInstance(Activity.MODE_PRIVATE).remove("token")
+            val intent = Intent(this@MaturityActivity, LoginActivity::class.java)
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
             startActivity(intent)
             finish()

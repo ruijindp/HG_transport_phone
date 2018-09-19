@@ -133,12 +133,10 @@ class OrderDetailActivity : BaseActivity(), View.OnClickListener {
                 .setMacAddress(spUtils.getString("macAddress", ""))
                 .build()
         DeviceConnFactoryManager.deviceConnFactoryManagers[id]!!.openPort()
-//        Handler().postDelayed({
         if (!DeviceConnFactoryManager.deviceConnFactoryManagers[id]!!.connState) {
             ToastUtils.showShort("未找到打印机")
             runOnUiThread { tvConnectPrinter.text = "连接打印机" }
         }
-//        }, 10)
     }
 
 
@@ -297,8 +295,7 @@ class OrderDetailActivity : BaseActivity(), View.OnClickListener {
                 .build()
         DeviceConnFactoryManager.deviceConnFactoryManagers[id]!!.openPort()
 
-//        Handler().postDelayed({ btnReceiptPrint() }, 500)
-
+        Handler().postDelayed({ btnReceiptPrint() }, 500)
     }
 
     private fun btnReceiptPrint() {

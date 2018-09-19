@@ -25,6 +25,7 @@ class ConfirmOrderActivity : BaseActivity(), View.OnClickListener {
 
     private var pageValue = 0
     private var totalLinen = 0
+    private var linen:String? = null
 
     override fun getLayoutID(): Int {
         return R.layout.activity_confirm_order
@@ -43,6 +44,7 @@ class ConfirmOrderActivity : BaseActivity(), View.OnClickListener {
         }
         pageValue = intent.getIntExtra("pageValue", -1)
         val linenResult: ArrayList<EvenBusEven> = arrayList
+        linen = intent.getStringExtra("linen")
 
         ivPageBack.setOnClickListener(this)
         tvConfirmOrder.setOnClickListener(this)
@@ -105,6 +107,7 @@ class ConfirmOrderActivity : BaseActivity(), View.OnClickListener {
                 toast(it.message)
                 val intent = Intent(this@ConfirmOrderActivity, SuccessActivity::class.java)
                 intent.putExtra("totalLinen", totalLinen)
+                intent.putExtra("linen", linen)
                 startActivity(intent)
             }
         }
