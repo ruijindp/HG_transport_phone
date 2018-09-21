@@ -79,7 +79,7 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
                 spUtils.put("name", it.retData.name)
                 spUtils.put("userName", etAccount.text.toString())
                 spUtils.put("password", etPassword.text.toString())
-                startActivity(Intent(this, HotelActivity::class.java))
+                startActivity(Intent(this, ScanningActivity::class.java))
                 finish()
             }
         }

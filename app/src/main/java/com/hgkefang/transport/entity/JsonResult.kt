@@ -58,7 +58,8 @@ data class Son(
         val id: String,
         val tradition_name: String,
         val tradition_pid: String,
-        val tradition_spec: String
+        val tradition_spec: String,
+        var count: Int
 )
 
 data class Version(

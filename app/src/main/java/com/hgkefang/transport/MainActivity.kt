@@ -38,7 +38,6 @@ import com.hgkefang.transport.net.API_CHECK_EXPIRE
 import com.hgkefang.transport.net.API_UPDATE
 import com.hgkefang.transport.util.*
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.activity_order_detail.*
 import kotlinx.android.synthetic.main.view_title.*
 import org.jetbrains.anko.toast
 import java.net.URLDecoder
@@ -129,7 +128,6 @@ class MainActivity : BaseActivity(), View.OnClickListener {
         DeviceConnFactoryManager.deviceConnFactoryManagers[id]!!.openPort()
         if (!DeviceConnFactoryManager.deviceConnFactoryManagers[id]!!.connState) {
             ToastUtils.showShort("未找到打印机")
-            runOnUiThread { tvConnectPrinter.text = "连接打印机" }
         }
     }
 

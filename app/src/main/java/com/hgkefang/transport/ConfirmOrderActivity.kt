@@ -108,7 +108,9 @@ class ConfirmOrderActivity : BaseActivity(), View.OnClickListener {
                 val intent = Intent(this@ConfirmOrderActivity, SuccessActivity::class.java)
                 intent.putExtra("totalLinen", totalLinen)
                 intent.putExtra("linen", linen)
+                intent.putExtra("pageValue", pageValue)
                 startActivity(intent)
+                finish()
             }
         }
     }

@@ -29,9 +29,16 @@ import org.jetbrains.anko.toast
  */
 class LinenTypeActivity : BaseActivity(), View.OnClickListener {
 
+    companion object {
+        var isFinish = false
+    }
+
     private lateinit var addResult: ArrayList<EvenBusEven>
     private var currentTab = 1
     private var shoeId = -1
+    private val linenResults = ArrayList<RetData>()
+    private val shoeResults = ArrayList<RetData>()
+    private lateinit var adapter: LinenTypeAdapter
 
     override fun getLayoutID(): Int {
         return R.layout.activity_linen_type
@@ -54,6 +61,8 @@ class LinenTypeActivity : BaseActivity(), View.OnClickListener {
 
         addResult = ArrayList()
 
+        adapter =  LinenTypeAdapter(if (currentTab == 1) linenResults else shoeResults)
+        rvContent.adapter = adapter
 //        refreshData()
         getShoeIDData()
     }
@@ -107,16 +116,15 @@ class LinenTypeActivity : BaseActivity(), View.OnClickListener {
                     toast(it.message)
                     return@httpPost
                 }
-                val linenResults = ArrayList<RetData>()
-                val shoeResults = ArrayList<RetData>()
-                it.retData.map {
-                    if (it.id == shoeId.toString()){
+
+                it.retData.forEach {
+                    if (it.id == shoeId.toString()) {
                         shoeResults.add(it)
-                    } else{
+                    } else {
                         linenResults.add(it)
                     }
                 }
-                rvContent.adapter = LinenTypeAdapter(if (currentTab == 1) linenResults else shoeResults)
+                adapter.notifyDataSetChanged()
             }
         }
     }
@@ -141,7 +149,11 @@ class LinenTypeActivity : BaseActivity(), View.OnClickListener {
                 view2.visibility = View.INVISIBLE
                 tvLinen.setTextColor(ContextCompat.getColor(this, R.color.colorAccent))
                 tvShoe.setTextColor(ContextCompat.getColor(this, R.color.black_2d))
-                refreshData()
+//                refreshData()
+//                adapter.notifyDataSetChanged()
+
+                adapter =  LinenTypeAdapter(linenResults)
+                rvContent.adapter = adapter
             }
             R.id.flShoe -> {
                 currentTab = 2
@@ -149,8 +161,20 @@ class LinenTypeActivity : BaseActivity(), View.OnClickListener {
                 view2.visibility = View.VISIBLE
                 tvShoe.setTextColor(ContextCompat.getColor(this, R.color.colorAccent))
                 tvLinen.setTextColor(ContextCompat.getColor(this, R.color.black_2d))
-                refreshData()
+//                refreshData()
+//                adapter.notifyDataSetChanged()
+
+                adapter =  LinenTypeAdapter(shoeResults)
+                rvContent.adapter = adapter
             }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (isFinish){
+            isFinish = false
+            finish()
         }
     }
 
@@ -168,7 +192,8 @@ class LinenTypeActivity : BaseActivity(), View.OnClickListener {
     fun onMessageEvent(event: EvenBusEven) {
         var hasExist = false
         var totalCount = 0
-        addResult.map {
+
+        addResult.forEach {
             if (it.son.id == event.son.id) {
                 it.count = event.count
                 hasExist = true
@@ -176,8 +201,12 @@ class LinenTypeActivity : BaseActivity(), View.OnClickListener {
         }
         if (!hasExist)
             addResult.add(event)
-        addResult.map {
+
+        addResult.forEach {
             totalCount += it.count
+            if (it.count == 0) {
+                addResult.remove(event)
+            }
         }
         tvLinenCount.text = String.format(getString(R.string.total_linen), totalCount)
     }

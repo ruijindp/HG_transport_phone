@@ -8,7 +8,6 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.hardware.usb.UsbManager.ACTION_USB_DEVICE_DETACHED
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -62,16 +61,10 @@ class OrderDetailActivity : BaseActivity(), View.OnClickListener {
         return R.layout.activity_order_detail
     }
 
-    private val pageValue: Int
-        get() {
-            return intent.getIntExtra("pageValue", -1)
-        }
-
     private lateinit var typeList: ArrayList<String>
     override fun initialize(savedInstanceState: Bundle?) {
         tvPageTitle.text = getString(R.string.order_detail)
         retData = intent.getSerializableExtra("retData") as RetData
-        val pageValue = pageValue
 
         typeList = ArrayList()
         if (retData!!.tradition_data.contains("|")) {
@@ -79,13 +72,18 @@ class OrderDetailActivity : BaseActivity(), View.OnClickListener {
         } else {
             typeList.add(retData!!.tradition_data)
         }
-
-        if(!MyApplication.retData?.floor_name.isNullOrEmpty()){
+        when (retData?.tradition_order_type) {
+            "1" -> tvOrderType.text = String.format("%s%s", getString(R.string.order_type), getString(R.string.send_linen))
+            "2" -> tvOrderType.text = String.format("%s%s", getString(R.string.order_type), getString(R.string.pick_linen))
+            "3" -> tvOrderType.text = String.format("%s%s", getString(R.string.order_type), getString(R.string.pollution))
+            "4" -> tvOrderType.text = String.format("%s%s", getString(R.string.order_type), getString(R.string.rewash_linen))
+        }
+        if (!MyApplication.retData?.floor_name.isNullOrEmpty()) {
             tvCategory.visibility = View.VISIBLE
             tvCategory.text = String.format("%s%s", getString(R.string.category_name_), MyApplication.retData?.floor_name)
         }
         tvPrincipal.text = String.format("%s%s", getString(R.string.principal), MyApplication.name)
-        if (pageValue == 1) {
+        if (retData?.tradition_order_type == "1") {
             tvLinenTrend.text = String.format("%s%s - %s", getString(R.string.linen_trend_), retData!!.tradition_hotel_name, retData!!.tradition_wash_name)
         } else {
             tvLinenTrend.text = String.format("%s%s - %s", getString(R.string.linen_trend_), retData!!.tradition_wash_name, retData!!.tradition_hotel_name)
@@ -185,7 +183,7 @@ class OrderDetailActivity : BaseActivity(), View.OnClickListener {
 
     override fun onStart() {
         super.onStart()
-        if(!MyApplication.hasConnectPrinter){
+        if (!MyApplication.hasConnectPrinter) {
             val filter = IntentFilter()
             filter.addAction(ACTION_QUERY_PRINTER_STATE)
             filter.addAction(DeviceConnFactoryManager.ACTION_CONN_STATE)
@@ -195,13 +193,13 @@ class OrderDetailActivity : BaseActivity(), View.OnClickListener {
 
     override fun onDestroy() {
         super.onDestroy()
-        if(!MyApplication.hasConnectPrinter){
+        if (!MyApplication.hasConnectPrinter) {
             unregisterReceiver(receiver)
 //            DeviceConnFactoryManager.closeAllPort()
         }
-        if (threadPool != null) {
-            threadPool!!.stopThreadPool()
-        }
+//        if (threadPool != null) {
+//            threadPool!!.stopThreadPool()
+//        }
     }
 
     // 打印机蓝牙连接
@@ -332,8 +330,17 @@ class OrderDetailActivity : BaseActivity(), View.OnClickListener {
         esc.addPrintAndLineFeed()
         esc.addText("酒店名称：${MyApplication.retData?.tradition_hotel_name}\n")
         esc.addText("订单号：${retData!!.tradition_ordernumber}\n")
-        esc.addText("负责人：${MyApplication.name}\n")
-        if (pageValue == 1) {
+        esc.addText("经手人：${MyApplication.name}\n")
+        if (!MyApplication.retData?.floor_name.isNullOrEmpty()) {
+            esc.addText(String.format("%s%s", getString(R.string.category_name_), MyApplication.retData?.floor_name))
+        }
+        when (retData?.tradition_order_type) {
+            "1" -> esc.addText("布草类型：${getString(R.string.send_linen)}\n")
+            "2" -> esc.addText("布草类型：${getString(R.string.pick_linen)}\n")
+            "3" -> esc.addText("布草类型：${getString(R.string.pollution)}\n")
+            "4" -> esc.addText("布草类型：${getString(R.string.rewash_linen)}\n")
+        }
+        if (retData?.tradition_order_type == "1") {
             esc.addText(String.format("%s%s - %s\n", getString(R.string.linen_trend_), retData!!.tradition_hotel_name, retData!!.wash_name))
         } else {
             esc.addText(String.format("%s%s - %s\n", getString(R.string.linen_trend_), retData!!.wash_name, retData!!.tradition_hotel_name))
@@ -354,7 +361,7 @@ class OrderDetailActivity : BaseActivity(), View.OnClickListener {
             for (retData in typeResult) {
                 retData.son.map {
                     if (it.id == result.split("-")[0]) {
-                        var linenType = "${it.tradition_name}${it.tradition_spec}"
+                        var linenType = "${it.tradition_name}-${it.tradition_spec}"
                         val stringBuilder = StringBuilder(linenType)
                         if (linenType.length < 30) {
                             for (i in 0 until (30 - linenType.length)) {

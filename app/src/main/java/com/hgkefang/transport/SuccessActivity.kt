@@ -25,11 +25,9 @@ import com.hgkefang.transport.util.PrinterCommand
 import com.hgkefang.transport.util.ThreadPool
 import kotlinx.android.synthetic.main.activity_order_detail.*
 import kotlinx.android.synthetic.main.activity_success.*
-import org.jetbrains.anko.toast
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.ArrayList
 
 /**
  * Create by admin on 2018/9/5
@@ -50,13 +48,15 @@ class SuccessActivity : BaseActivity() {
     private var threadPool: ThreadPool? = null
     private val spUtils = SPUtils.getInstance(Activity.MODE_PRIVATE)
     private var linenResult: ArrayList<EvenBusEven>? = null
+    private var pageValue: Int = 0
 
     override fun getLayoutID(): Int {
         return R.layout.activity_success
     }
 
     override fun initialize(savedInstanceState: Bundle?) {
-        linenResult = Gson().fromJson<EvenBusEven>(intent.getStringExtra("linen"), object : TypeToken<List<EvenBusEven>>(){}.type) as ArrayList<EvenBusEven>
+        pageValue = intent.getIntExtra("pageValue", -1)
+        linenResult = Gson().fromJson<EvenBusEven>(intent.getStringExtra("linen"), object : TypeToken<List<EvenBusEven>>() {}.type) as ArrayList<EvenBusEven>
         tvLinenCount.text = String.format(getString(R.string.commit_count), intent.getIntExtra("totalLinen", -1))
         tvBackMain.setOnClickListener {
             val intent = Intent(this@SuccessActivity, MainActivity::class.java)
@@ -65,6 +65,7 @@ class SuccessActivity : BaseActivity() {
             finish()
         }
         tvSeeOrder.setOnClickListener {
+            LinenTypeActivity.isFinish = true
             startActivity(Intent(this@SuccessActivity, HistoryOrderActivity::class.java))
             finish()
         }
@@ -121,9 +122,9 @@ class SuccessActivity : BaseActivity() {
         if (!MyApplication.hasConnectPrinter) {
             unregisterReceiver(receiver)
         }
-        if (threadPool != null) {
-            threadPool!!.stopThreadPool()
-        }
+//        if (threadPool != null) {
+//            threadPool!!.stopThreadPool()
+//        }
     }
 
     private val receiver = object : BroadcastReceiver() {
@@ -239,7 +240,16 @@ class SuccessActivity : BaseActivity() {
         esc.addSelectJustification(EscCommand.JUSTIFICATION.LEFT)
         esc.addPrintAndLineFeed()
         esc.addText("酒店名称：${MyApplication.retData?.tradition_hotel_name}\n")
-        esc.addText("负责人：${MyApplication.name}\n")
+        esc.addText("经手人：${MyApplication.name}\n")
+        if (!MyApplication.retData?.floor_name.isNullOrEmpty()) {
+            esc.addText(String.format("%s%s", getString(R.string.category_name_), MyApplication.retData?.floor_name))
+        }
+        when(pageValue){
+            1 -> esc.addText("布草类型：${getString(R.string.send_linen)}\n")
+            2 -> esc.addText("布草类型：${getString(R.string.pick_linen)}\n")
+            3 -> esc.addText("布草类型：${getString(R.string.pollution)}\n")
+            4 -> esc.addText("布草类型：${getString(R.string.rewash_linen)}\n")
+        }
         esc.addSelectPrintModes(EscCommand.FONT.FONTA, EscCommand.ENABLE.OFF, EscCommand.ENABLE.ON, EscCommand.ENABLE.ON, EscCommand.ENABLE.OFF)
         esc.addText("------------------------\n")
         esc.addText("商品信息：\n")
@@ -253,7 +263,7 @@ class SuccessActivity : BaseActivity() {
         for (result in linenResult!!) {
             val sb = StringBuilder()
             totalLinenCount += result.count
-            var linenType = "${result.son.tradition_name}${result.son.tradition_spec}"
+            var linenType = "${result.son.tradition_name}-${result.son.tradition_spec}"
             val stringBuilder = StringBuilder(linenType)
             if (linenType.length < 30) {
                 for (i in 0 until (30 - linenType.length)) {

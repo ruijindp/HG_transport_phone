@@ -111,7 +111,7 @@ class HistoryOrderFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListene
     }
 
     private fun connectBle() {
-        if(BluetoothAdapter.getDefaultAdapter() == null) return
+        if (BluetoothAdapter.getDefaultAdapter() == null) return
         if (!BluetoothAdapter.getDefaultAdapter().isEnabled) {
             return
         }
@@ -353,8 +353,17 @@ class HistoryOrderFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListene
         esc.addPrintAndLineFeed()
         esc.addText("酒店名称：${MyApplication.retData?.tradition_hotel_name}\n")
         esc.addText("订单号：${retData!!.tradition_ordernumber}\n")
-        esc.addText("负责人：${MyApplication.name}\n")
-        if (pageValue == 1) {
+        esc.addText("经手人：${MyApplication.name}\n")
+        if (!MyApplication.retData?.floor_name.isNullOrEmpty()) {
+            esc.addText(String.format("%s%s", getString(R.string.category_name_), MyApplication.retData?.floor_name))
+        }
+        when (retData?.tradition_order_type) {
+            "1" -> esc.addText("布草类型：${getString(R.string.send_linen)}\n")
+            "2" -> esc.addText("布草类型：${getString(R.string.pick_linen)}\n")
+            "3" -> esc.addText("布草类型：${getString(R.string.pollution)}\n")
+            "4" -> esc.addText("布草类型：${getString(R.string.rewash_linen)}\n")
+        }
+        if (retData?.tradition_order_type == "1") {
             esc.addText(String.format("%s%s - %s\n", getString(R.string.linen_trend_), retData!!.tradition_hotel_name, retData!!.tradition_wash_name))
         } else {
             esc.addText(String.format("%s%s - %s\n", getString(R.string.linen_trend_), retData!!.tradition_wash_name, retData!!.tradition_hotel_name))
@@ -375,7 +384,7 @@ class HistoryOrderFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListene
             for (retData in typeResult) {
                 retData.son.map {
                     if (it.id == result.split("-")[0]) {
-                        var s = "${it.tradition_name}${it.tradition_spec}"
+                        var s = "${it.tradition_name}-${it.tradition_spec}"
                         val stringBuilder = StringBuilder(s)
                         if (s.length < 30) {
                             for (i in 0 until (30 - s.length)) {
@@ -412,8 +421,8 @@ class HistoryOrderFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListene
             requireActivity().unregisterReceiver(receiver)
 //            DeviceConnFactoryManager.closeAllPort()
         }
-        if (threadPool != null) {
-            threadPool!!.stopThreadPool()
-        }
+//        if (threadPool != null) {
+//            threadPool!!.stopThreadPool()
+//        }
     }
 }
