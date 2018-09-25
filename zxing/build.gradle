@@ -17,7 +17,7 @@ dependencies {
 android {
     resourcePrefix 'zxing_'
     compileSdkVersion 27
-    buildToolsVersion '27.0.3'
+    buildToolsVersion '28.0.2'
 
     sourceSets {
         main {
@@ -44,6 +44,9 @@ android {
     testOptions {
         // We test with primitives such as Rect, and rely on their default behaviour working.
         unitTests.returnDefaultValues = true
+    }
+    defaultConfig {
+        minSdkVersion = 14
     }
 }
 

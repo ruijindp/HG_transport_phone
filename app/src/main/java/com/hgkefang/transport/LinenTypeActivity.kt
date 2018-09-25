@@ -98,7 +98,7 @@ class LinenTypeActivity : BaseActivity(), View.OnClickListener {
     private fun refreshData() {
 //        showLoadingDialog()
         val params = LinkedHashMap<String, Any?>()
-        params["hotel_id"] = MyApplication.hotel_id
+        params["hotel_id"] = MyApplication.retData?.id
         params["token"] = MyApplication.token
         API_LINEN_TYPE.httpPost(getRequestParams(Gson().toJson(params))) { statusCode, body ->
             Log.i("response_linen", body)

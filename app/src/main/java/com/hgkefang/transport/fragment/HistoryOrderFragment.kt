@@ -20,6 +20,7 @@ import com.blankj.utilcode.util.SPUtils
 import com.blankj.utilcode.util.TimeUtils
 import com.blankj.utilcode.util.ToastUtils
 import com.bronze.kutil.httpPost
+import com.bronze.kutil.log
 import com.google.gson.Gson
 import com.gprinter.command.EscCommand
 import com.hgkefang.transport.BluetoothActivity
@@ -215,8 +216,8 @@ class HistoryOrderFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListene
     private lateinit var typeResult: ArrayList<RetData>
     private fun getLineTypeData() {
         showLoadingDialog()
-        val params = java.util.LinkedHashMap<String, Any?>()
-        params["hotel_id"] = MyApplication.hotel_id
+        val params = LinkedHashMap<String, Any?>()
+        params["hotel_id"] = MyApplication.retData?.id
         params["token"] = MyApplication.token
         API_LINEN_TYPE.httpPost(getRequestParams(Gson().toJson(params))) { statusCode, body ->
             Log.i("response_linen", body)
