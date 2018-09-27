@@ -24,7 +24,6 @@ import org.jetbrains.anko.toast
  */
 class BluetoothActivity : BaseActivity() {
 
-    val EXTRA_DEVICE_ADDRESS = "address"
     private val REQUEST_ENABLE_BT = 2
     private var mBluetoothAdapter: BluetoothAdapter? = null
     private var mNewDevicesArrayAdapter: ArrayAdapter<String>? = null
@@ -70,7 +69,7 @@ class BluetoothActivity : BaseActivity() {
     override fun onDestroy() {
         super.onDestroy()
         if (mBluetoothAdapter != null) {
-            mBluetoothAdapter!!.cancelDiscovery()
+            mBluetoothAdapter?.cancelDiscovery()
         }
         unregisterReceiver(mFindBlueToothReceiver)
     }
@@ -113,27 +112,22 @@ class BluetoothActivity : BaseActivity() {
             if (BluetoothDevice.ACTION_FOUND == action) {
                 val device = intent.getParcelableExtra<BluetoothDevice>(BluetoothDevice.EXTRA_DEVICE)
                 if (device.bondState != BluetoothDevice.BOND_BONDED) {
-                    mNewDevicesArrayAdapter!!.add(device.name + "\n" + device.address)
+                    mNewDevicesArrayAdapter?.add(device.name + "\n" + device.address)
                 }
             } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED == action) {
-                setProgressBarIndeterminateVisibility(false)
-                setTitle(R.string.select_bluetooth_device)
-                Log.i("tag", "finish discovery" + mNewDevicesArrayAdapter!!.count)
                 if (mNewDevicesArrayAdapter!!.count == 0) {
-                    val noDevices = resources.getText(
-                            R.string.none_bluetooth_device_found).toString()
-                    mNewDevicesArrayAdapter!!.add(noDevices)
+                    val noDevices = resources.getText(R.string.none_bluetooth_device_found).toString()
+                    mNewDevicesArrayAdapter?.add(noDevices)
                 }
             }
+            mNewDevicesArrayAdapter?.notifyDataSetChanged()
         }
     }
 
     private fun discoveryDevice() {
-        setProgressBarIndeterminateVisibility(true)
-        setTitle(R.string.scanning)
         if (mBluetoothAdapter!!.isDiscovering) {
-            mBluetoothAdapter!!.cancelDiscovery()
+            mBluetoothAdapter?.cancelDiscovery()
         }
-        mBluetoothAdapter!!.startDiscovery()
+        mBluetoothAdapter?.startDiscovery()
     }
 }

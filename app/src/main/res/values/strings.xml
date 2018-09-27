@@ -56,6 +56,8 @@
     <string name="select_hotel_">手动选择酒店</string>
     <string name="new_version">发现新版本</string>
     <string name="update">\n\n请保持更新！</string>
+    <string name="downloading">下载中：</string>
+    <string name="wait">努力下载中，请稍后&#8230;</string>
 
     <string name="digits_number">0123456789</string>
     <string name="hint_number">输入数量</string>

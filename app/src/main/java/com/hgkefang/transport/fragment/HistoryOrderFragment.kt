@@ -157,12 +157,10 @@ class HistoryOrderFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListene
             }
         }
         isLoading = true
-        val params = LinkedHashMap<String, Any?>()
-        params["page"] = currentPage
-        params["hotel_id"] = MyApplication.retData?.id
-        if (pageValue != 0)
-            params["type"] = pageValue
-        params["token"] = MyApplication.token
+        val params = linkedMapOf("page" to currentPage,
+                "hotel_id" to MyApplication.retData?.id,
+                "type" to pageValue,
+                "token" to MyApplication.token)
         API_ORDER.httpPost(getRequestParams(Gson().toJson(params))) { statusCode, body ->
             Log.i("response_order$pageValue", body)
             cancelRefreshAnimation(swipeRefreshLayout)
@@ -185,7 +183,7 @@ class HistoryOrderFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListene
                 hasMore = it.retData.size == 15
                 if (currentPage == 1) {
                     results = it.retData
-                    adapter = HistoryOrderAdapter(pageValue, results!!, this)
+                    adapter = HistoryOrderAdapter(results!!, this)
                     rvContent.adapter = adapter
                 } else {
                     results!!.addAll(it.retData)

@@ -141,9 +141,8 @@ class OrderDetailActivity : BaseActivity(), View.OnClickListener {
     private lateinit var typeResult: ArrayList<RetData>
     private fun getLineTypeData() {
         showLoadingDialog()
-        val params = LinkedHashMap<String, Any?>()
-        params["hotel_id"] = MyApplication.retData?.id
-        params["token"] = MyApplication.token
+        val params = linkedMapOf("hotel_id" to MyApplication.retData?.id,
+                "token" to MyApplication.token)
         API_LINEN_TYPE.httpPost(getRequestParams(Gson().toJson(params))) { statusCode, body ->
             Log.i("response_linen", body)
             dismissDialog()

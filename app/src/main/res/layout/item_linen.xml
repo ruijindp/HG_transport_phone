@@ -26,7 +26,6 @@
         app:layoutManager="android.support.v7.widget.LinearLayoutManager"
         tools:targetApi="lollipop"/>
 
-    <View style="@style/div1"
-        />
+    <View style="@style/div1"/>
 
 </LinearLayout>

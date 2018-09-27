@@ -3,7 +3,6 @@ package com.hgkefang.transport
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.text.TextUtils
 import android.util.Log
 import android.view.View
 import com.blankj.utilcode.util.SPUtils
@@ -31,22 +30,24 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
     override fun initialize(savedInstanceState: Bundle?) {
         hasNeedFitWindow = true
         spUtils = SPUtils.getInstance(Activity.MODE_PRIVATE)
-        if (!TextUtils.isEmpty(MyApplication.token)) {
-            startActivity(Intent(this, ScanningActivity::class.java))
-            finish()
-            return
-        }
-        if (!TextUtils.isEmpty(spUtils.getString("userName"))) {
+//        if (!TextUtils.isEmpty(MyApplication.token)) {
+//            startActivity(Intent(this, ScanningActivity::class.java))
+//            finish()
+//            return
+//        }
+        if (!spUtils.getString("userName").isNullOrEmpty() &&
+                !spUtils.getString("password").isNullOrEmpty()) {
             etAccount.setText(spUtils.getString("userName"))
-        }
-        if (!TextUtils.isEmpty(spUtils.getString("password"))) {
             etPassword.setText(spUtils.getString("password"))
+            if (!MyApplication.token.isNullOrEmpty())
+                doLogin()
         }
+
         tvLogin.setOnClickListener(this)
     }
 
     override fun onClick(v: View?) {
-        when(v?.id){
+        when (v?.id) {
             R.id.tvLogin -> doLogin()
         }
     }
@@ -60,11 +61,11 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
         API_LOGIN.httpPost(getRequestParams(Gson().toJson(params))) { statusCode, body ->
             Log.i("doLogin", body)
             dismissDialog()
-            if (statusCode != 200){
+            if (statusCode != 200) {
                 toast("网络错误：$statusCode")
                 return@httpPost
             }
-            if (isJsonArrayType(body)){
+            if (isJsonArrayType(body)) {
                 toast(getJsonMessage(body))
                 return@httpPost
             }

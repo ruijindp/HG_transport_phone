@@ -55,10 +55,7 @@ class ScanningActivity : BaseActivity(), View.OnClickListener {
 
     private fun commitData(content: String) {
         showLoadingDialog()
-        val params = LinkedHashMap<String, Any?>()
-        params["code"] = content
-        params["token"] = MyApplication.token
-        Log.i("doScanning", params.toString())
+        val params = linkedMapOf("code" to content, "token" to MyApplication.token)
         API_ZXING.httpPost(getRequestParams(Gson().toJson(params))) { statusCode, body ->
             Log.i("response_scanning", body)
             dismissDialog()
@@ -131,10 +128,4 @@ class ScanningActivity : BaseActivity(), View.OnClickListener {
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         return barcodeView.onKeyDown(keyCode, event) || super.onKeyDown(keyCode, event)
     }
-
-//    override fun onBackPressed() {
-//        super.onBackPressed()
-//        ProxyActivity.isFinish = true
-//        finish()
-//    }
 }

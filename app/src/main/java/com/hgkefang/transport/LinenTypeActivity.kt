@@ -8,7 +8,7 @@ import android.view.View
 import android.view.WindowManager
 import com.bronze.kutil.httpPost
 import com.google.gson.Gson
-import com.hgkefang.transport.adapter.LinenTypeAdapter
+import com.hgkefang.transport.adapter.LinenTypeAdapter1
 import com.hgkefang.transport.app.MyApplication
 import com.hgkefang.transport.entity.CommonResult
 import com.hgkefang.transport.entity.EvenBusEven
@@ -38,7 +38,7 @@ class LinenTypeActivity : BaseActivity(), View.OnClickListener {
     private var shoeId = -1
     private val linenResults = ArrayList<RetData>()
     private val shoeResults = ArrayList<RetData>()
-    private lateinit var adapter: LinenTypeAdapter
+    private lateinit var adapter: LinenTypeAdapter1
 
     override fun getLayoutID(): Int {
         return R.layout.activity_linen_type
@@ -60,10 +60,10 @@ class LinenTypeActivity : BaseActivity(), View.OnClickListener {
         }
 
         addResult = ArrayList()
-
-        adapter =  LinenTypeAdapter(if (currentTab == 1) linenResults else shoeResults)
-        rvContent.adapter = adapter
 //        refreshData()
+        adapter = LinenTypeAdapter1(linenResults)
+        expandableListView.setAdapter(adapter)
+
         getShoeIDData()
     }
 
@@ -97,9 +97,8 @@ class LinenTypeActivity : BaseActivity(), View.OnClickListener {
 
     private fun refreshData() {
 //        showLoadingDialog()
-        val params = LinkedHashMap<String, Any?>()
-        params["hotel_id"] = MyApplication.retData?.id
-        params["token"] = MyApplication.token
+        val params = linkedMapOf("hotel_id" to MyApplication.retData?.id,
+                "token" to MyApplication.token)
         API_LINEN_TYPE.httpPost(getRequestParams(Gson().toJson(params))) { statusCode, body ->
             Log.i("response_linen", body)
             dismissDialog()
@@ -124,7 +123,7 @@ class LinenTypeActivity : BaseActivity(), View.OnClickListener {
                         linenResults.add(it)
                     }
                 }
-                adapter.notifyDataSetChanged()
+                notifyAdapter(linenResults)
             }
         }
     }
@@ -149,11 +148,7 @@ class LinenTypeActivity : BaseActivity(), View.OnClickListener {
                 view2.visibility = View.INVISIBLE
                 tvLinen.setTextColor(ContextCompat.getColor(this, R.color.colorAccent))
                 tvShoe.setTextColor(ContextCompat.getColor(this, R.color.black_2d))
-//                refreshData()
-//                adapter.notifyDataSetChanged()
-
-                adapter =  LinenTypeAdapter(linenResults)
-                rvContent.adapter = adapter
+                notifyAdapter(linenResults)
             }
             R.id.flShoe -> {
                 currentTab = 2
@@ -161,18 +156,22 @@ class LinenTypeActivity : BaseActivity(), View.OnClickListener {
                 view2.visibility = View.VISIBLE
                 tvShoe.setTextColor(ContextCompat.getColor(this, R.color.colorAccent))
                 tvLinen.setTextColor(ContextCompat.getColor(this, R.color.black_2d))
-//                refreshData()
-//                adapter.notifyDataSetChanged()
-
-                adapter =  LinenTypeAdapter(shoeResults)
-                rvContent.adapter = adapter
+                notifyAdapter(shoeResults)
             }
+        }
+    }
+
+    private fun notifyAdapter(result: ArrayList<RetData>) {
+        adapter = LinenTypeAdapter1(result)
+        expandableListView.setAdapter(adapter)
+        for (i in 0 until result.size) {
+            expandableListView.expandGroup(i)
         }
     }
 
     override fun onResume() {
         super.onResume()
-        if (isFinish){
+        if (isFinish) {
             isFinish = false
             finish()
         }

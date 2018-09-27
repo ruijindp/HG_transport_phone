@@ -10,6 +10,8 @@
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
 
     <application
         android:name=".app.MyApplication"
@@ -59,13 +61,6 @@
         <activity
             android:name=".BluetoothActivity"
             android:screenOrientation="portrait"/>
-
-        <!--<receiver android:name=".util.DownloadReceiver">-->
-            <!--<intent-filter>-->
-                <!--<action android:name="android.intent.action.DOWNLOAD_COMPLETE"/>-->
-                <!--<action android:name="android.intent.action.DOWNLOAD_NOTIFICATION_CLICKED"/>-->
-            <!--</intent-filter>-->
-        <!--</receiver>-->
 
         <provider
             android:name="android.support.v4.content.FileProvider"

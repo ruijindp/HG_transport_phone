@@ -62,11 +62,10 @@ class HotelActivity : BaseActivity(), View.OnClickListener, NamedEntityPopup.Ent
 
     private fun refreshData() {
         showLoadingDialog()
-        val params = LinkedHashMap<String, Any?>()
-        params["hotel_name"] = etHotel.text.toString()
-        params["token"] = MyApplication.token
+        val params = linkedMapOf("hotel_name" to etHotel.text.toString(),
+                "token" to MyApplication.token)
         API_HOTEL_INFO.httpPost(getRequestParams(Gson().toJson(params))) { statusCode, body ->
-            if(body.isNullOrEmpty()){
+            if (body.isNullOrEmpty()) {
                 toast("网络错误：$statusCode")
                 return@httpPost
             }

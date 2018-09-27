@@ -30,14 +30,33 @@ class DownloadReceiver(private val activity: Activity) : BroadcastReceiver() {
         val downloadManager = context?.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
         val downloadFileUri = downloadManager.getUriForDownloadedFile(id!!)
         val cursor = downloadManager.query(DownloadManager.Query().setFilterById(id))
+        if (activity is MainActivity){
+            activity.closeContentScheduled()
+        }
         if (cursor.moveToFirst()) {
-//            cursor.moveToFirst()
             val fileNameIdx = cursor.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI)
             val filePath = cursor.getString(fileNameIdx)
+            val columnIndex = cursor.getColumnIndex(DownloadManager.COLUMN_STATUS)
+            val status = cursor.getInt(columnIndex)
             cursor.close()
-            if (activity is MainActivity) {
-                activity.installApk(filePath)
+            when(status){
+                DownloadManager.STATUS_FAILED->{
+                    ToastUtils.showLong("下载失败")
+                    if (activity is MainActivity) {
+                        activity.dismissDownloadDialog()
+                    }
+                }
+                DownloadManager.STATUS_PAUSED->{}
+                DownloadManager.STATUS_PENDING->{}
+                DownloadManager.STATUS_RUNNING->{}
+                DownloadManager.STATUS_SUCCESSFUL->{
+                    if (activity is MainActivity) {
+                        activity.dismissDownloadDialog()
+                        activity.installApk(filePath)
+                    }
+                }
             }
         }
     }
+
 }

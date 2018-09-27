@@ -30,6 +30,7 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.Theme
 import com.blankj.utilcode.util.*
 import com.bronze.kutil.httpPost
+import com.daimajia.numberprogressbar.NumberProgressBar
 import com.google.gson.Gson
 import com.hgkefang.transport.app.MyApplication
 import com.hgkefang.transport.entity.ObjectResult
@@ -43,7 +44,7 @@ import org.jetbrains.anko.toast
 import java.net.URLDecoder
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.LinkedHashMap
+import kotlin.properties.Delegates
 
 class MainActivity : BaseActivity(), View.OnClickListener {
 
@@ -60,6 +61,8 @@ class MainActivity : BaseActivity(), View.OnClickListener {
     private val spUtils = SPUtils.getInstance(Activity.MODE_PRIVATE)
     private var downloadId: Long = 0
     private lateinit var downloadReceiver: DownloadReceiver
+    private var downloadManagerUtil: DownloadManagerUtil by Delegates.notNull()
+    private lateinit var downloadDialog: Dialog
 
     override fun getLayoutID(): Int {
         return R.layout.activity_main
@@ -75,17 +78,24 @@ class MainActivity : BaseActivity(), View.OnClickListener {
         ivPrinter.setOnClickListener(this)
         ivScanning.setOnClickListener(this)
         tvSignOut.setOnClickListener(this)
+
+        downloadManagerUtil = DownloadManagerUtil(this@MainActivity)
         checkIsMaturity()
         tvPageTitle.text = MyApplication.retData?.tradition_hotel_name
         connectBle()
 
-        checkVersion()
+//        checkVersion()
 
         downloadReceiver = DownloadReceiver(this@MainActivity)
         val intentFilter = IntentFilter()
         intentFilter.addAction(DownloadManager.ACTION_NOTIFICATION_CLICKED)
         intentFilter.addAction(DownloadManager.ACTION_DOWNLOAD_COMPLETE)
         registerReceiver(downloadReceiver, intentFilter)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        checkVersion()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -134,8 +144,7 @@ class MainActivity : BaseActivity(), View.OnClickListener {
     //检查是否过期
     private fun checkIsMaturity() {
         showLoadingDialog()
-        val param = LinkedHashMap<String, Any?>()
-        param["token"] = MyApplication.token
+        val param = mapOf("token" to MyApplication.token)
         API_CHECK_EXPIRE.httpPost(getRequestParams(Gson().toJson(param))) { statusCode, body ->
             Log.i("response_check", body)
             dismissDialog()
@@ -221,8 +230,7 @@ class MainActivity : BaseActivity(), View.OnClickListener {
     }
 
     private fun checkVersion() {
-        val params = LinkedHashMap<String, Any?>()
-        params["token"] = MyApplication.token
+        val params = mapOf("token" to MyApplication.token)
         API_UPDATE.httpPost(getRequestParams(Gson().toJson(params))) { statusCode, body ->
             Log.i("response_update", body)
             if (statusCode != 200) {
@@ -257,13 +265,34 @@ class MainActivity : BaseActivity(), View.OnClickListener {
                 .positiveText(android.R.string.ok)
                 .positiveColor(ContextCompat.getColor(this, R.color.colorAccent))
                 .onPositive { _, _ ->
-                    val downloadManagerUtil = DownloadManagerUtil(this@MainActivity)
                     if (downloadId != 0L) {
                         downloadManagerUtil.clearCurrentTask(downloadId)
                     }
                     val url = URLDecoder.decode(version.url, "UTF-8")
                     downloadId = downloadManagerUtil.download(url, "transport.apk", "下载中，请保持最新版本")
+                    showDownloadDialog()
                 }.show()
+    }
+
+    private fun showDownloadDialog() {
+        downloadDialog = MaterialDialog.Builder(this)
+                .theme(Theme.LIGHT)
+                .title(R.string.downloading)
+                .cancelable(false)
+                .customView(R.layout.dialog_download, false)
+                .show()
+        val numberProgressBar = downloadDialog.findViewById(R.id.numberProgressBar) as NumberProgressBar
+        downloadManagerUtil.setOnProgressListener(object : DownloadManagerUtil.OnProgressListener {
+            override fun onProgress(fraction: Float) {
+                numberProgressBar.progress = (fraction * 100).toInt()
+            }
+        })
+    }
+
+    fun dismissDownloadDialog() {
+        if (downloadDialog.isShowing) {
+            downloadDialog.dismiss()
+        }
     }
 
     override fun onStart() {
@@ -282,6 +311,11 @@ class MainActivity : BaseActivity(), View.OnClickListener {
             threadPool!!.stopThreadPool()
         }
         unregisterReceiver(downloadReceiver)
+        downloadManagerUtil.unregisterContentObserver()
+    }
+
+    fun closeContentScheduled() {
+        downloadManagerUtil.close()
     }
 
     private val receiver = object : BroadcastReceiver() {

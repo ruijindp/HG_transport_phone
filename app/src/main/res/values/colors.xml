@@ -4,6 +4,7 @@
     <color name="colorPrimaryDark">#FAFAFA</color>
     <color name="colorAccent">#0090FF</color>
 
+    <color name="gray_f8">#f8f8f8</color>
     <color name="gray_f6">#f6f6f6</color>
     <color name="gray_93">#939393</color>
     <color name="gray_6d">#6d6d6d</color>

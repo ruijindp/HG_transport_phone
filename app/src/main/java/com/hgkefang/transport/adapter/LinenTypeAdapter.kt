@@ -24,7 +24,7 @@ class LinenTypeAdapter(private val retData: List<RetData>) : RecyclerView.Adapte
     override fun onBindViewHolder(holder: SimpleHolder, position: Int) {
         val result = retData[position]
         with(holder.itemView) {
-            tvLinenCategory.text = result.tradition_name
+            tvLinenCategory.text = String.format("%s(x%s)", result.tradition_name, result.num)
             rvItemContent.post { rvItemContent.adapter = LinenItemAdapter(result.son) }
         }
     }

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:paddingTop="15dp"
+    android:paddingBottom="15dp"
+    android:paddingStart="12dp"
+    android:paddingEnd="12dp">
+
+    <TextView
+        android:id="@+id/tvLinenCategory"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/app_name"
+        android:textColor="@color/gray_6d"
+        android:textSize="13sp"/>
+
+    <ImageView
+        android:id="@+id/ivIndicator"
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:contentDescription="@string/app_name"
+        android:src="@mipmap/ic_end"
+        android:tint="@color/gray_6d"/>
+</android.support.constraint.ConstraintLayout>
