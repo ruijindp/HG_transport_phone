@@ -84,9 +84,9 @@ class OrderDetailActivity : BaseActivity(), View.OnClickListener {
         }
         tvPrincipal.text = String.format("%s%s", getString(R.string.principal), MyApplication.name)
         if (retData?.tradition_order_type == "1") {
-            tvLinenTrend.text = String.format("%s%s - %s", getString(R.string.linen_trend_), retData!!.tradition_hotel_name, retData!!.tradition_wash_name)
+            tvLinenTrend.text = String.format("%s%s - %s", getString(R.string.linen_trend_), retData?.tradition_hotel_name ?: "酒店", retData?.tradition_wash_name ?: "洗涤厂")
         } else {
-            tvLinenTrend.text = String.format("%s%s - %s", getString(R.string.linen_trend_), retData!!.tradition_wash_name, retData!!.tradition_hotel_name)
+            tvLinenTrend.text = String.format("%s%s - %s", getString(R.string.linen_trend_), retData?.tradition_wash_name ?: "洗涤厂", retData?.tradition_hotel_name ?: "酒店")
         }
         tvOrderNum.text = String.format("%s%s", getString(R.string.order_num), retData!!.tradition_ordernumber)
         tvOrderTime.text = String.format("%s%s", getString(R.string.order_time), TimeUtil.strTime2Date(retData!!.tradition_addtime, "yyyy-MM-dd HH:mm:ss"))
@@ -160,9 +160,9 @@ class OrderDetailActivity : BaseActivity(), View.OnClickListener {
                     return@httpPost
                 }
                 typeResult = it.retData
-                rvContent!!.setHasFixedSize(true)
-                rvContent!!.isNestedScrollingEnabled = false
-                rvContent!!.adapter = LinenInfoAdapter(retData!!.tradition_data, it.retData)
+                rvContent.setHasFixedSize(true)
+                rvContent.isNestedScrollingEnabled = false
+                rvContent.adapter = LinenInfoAdapter(retData!!.tradition_data, it.retData)
             }
         }
     }
@@ -328,10 +328,10 @@ class OrderDetailActivity : BaseActivity(), View.OnClickListener {
         esc.addSelectJustification(EscCommand.JUSTIFICATION.LEFT)
         esc.addPrintAndLineFeed()
         esc.addText("酒店名称：${MyApplication.retData?.tradition_hotel_name}\n")
-        esc.addText("订单号：${retData!!.tradition_ordernumber}\n")
+        esc.addText("订单号：${retData?.tradition_ordernumber}\n")
         esc.addText("经手人：${MyApplication.name}\n")
         if (!MyApplication.retData?.floor_name.isNullOrEmpty()) {
-            esc.addText(String.format("%s%s", getString(R.string.category_name_), MyApplication.retData?.floor_name))
+            esc.addText(String.format("%s%s\n", getString(R.string.category_name_), MyApplication.retData?.floor_name))
         }
         when (retData?.tradition_order_type) {
             "1" -> esc.addText("布草类型：${getString(R.string.send_linen)}\n")
@@ -340,9 +340,11 @@ class OrderDetailActivity : BaseActivity(), View.OnClickListener {
             "4" -> esc.addText("布草类型：${getString(R.string.rewash_linen)}\n")
         }
         if (retData?.tradition_order_type == "1") {
-            esc.addText(String.format("%s%s - %s\n", getString(R.string.linen_trend_), retData!!.tradition_hotel_name, retData!!.wash_name))
+            esc.addText(String.format("%s%s - %s\n", getString(R.string.linen_trend_),
+                    retData?.tradition_hotel_name ?: "酒店", retData?.tradition_wash_name ?: "洗涤厂"))
         } else {
-            esc.addText(String.format("%s%s - %s\n", getString(R.string.linen_trend_), retData!!.wash_name, retData!!.tradition_hotel_name))
+            esc.addText(String.format("%s%s - %s\n", getString(R.string.linen_trend_),
+                    retData?.tradition_wash_name ?: "洗涤厂", retData?.tradition_hotel_name ?: "酒店"))
         }
         esc.addSelectPrintModes(EscCommand.FONT.FONTA, EscCommand.ENABLE.OFF, EscCommand.ENABLE.ON, EscCommand.ENABLE.ON, EscCommand.ENABLE.OFF)
         esc.addText("------------------------\n")

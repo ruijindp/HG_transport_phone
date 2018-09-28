@@ -38,11 +38,13 @@ class HistoryOrderAdapter(private var result: ArrayList<RetData>,
             tvOrderTime.text = TimeUtil.strTime2Date(retData.tradition_addtime, "yyyy-MM-dd HH:mm:ss")
             tvOrderStatus.text = MyApplication.name
             if (retData.tradition_order_type == "1") {
-                tvLeftValue.text = String.format("%s - %s", retData.tradition_hotel_name, retData.tradition_wash_name)
+                tvLeftValue.text = String.format("%s - %s",
+                        retData.tradition_hotel_name ?: "酒店", retData.tradition_wash_name ?: "洗涤厂")
             } else {
-                tvLeftValue.text = String.format("%s - %s", retData.tradition_wash_name, retData.tradition_hotel_name)
+                tvLeftValue.text = String.format("%s - %s",
+                        retData.tradition_wash_name ?: "洗涤厂", retData.tradition_hotel_name ?: "酒店")
             }
-            tvMiddleValue.text = retData.tradition_hotel_name
+            tvMiddleValue.text = retData.tradition_hotel_name ?: "酒店"
             var totalCount = 0
             if (retData.tradition_data.contains("|")) {
                 retData.tradition_data.split("|").forEach {

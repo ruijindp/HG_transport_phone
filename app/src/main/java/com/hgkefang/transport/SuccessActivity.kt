@@ -242,9 +242,9 @@ class SuccessActivity : BaseActivity() {
         esc.addText("酒店名称：${MyApplication.retData?.tradition_hotel_name}\n")
         esc.addText("经手人：${MyApplication.name}\n")
         if (!MyApplication.retData?.floor_name.isNullOrEmpty()) {
-            esc.addText(String.format("%s%s", getString(R.string.category_name_), MyApplication.retData?.floor_name))
+            esc.addText(String.format("%s%s\n", getString(R.string.category_name_), MyApplication.retData?.floor_name))
         }
-        when(pageValue){
+        when (pageValue) {
             1 -> esc.addText("布草类型：${getString(R.string.send_linen)}\n")
             2 -> esc.addText("布草类型：${getString(R.string.pick_linen)}\n")
             3 -> esc.addText("布草类型：${getString(R.string.pollution)}\n")

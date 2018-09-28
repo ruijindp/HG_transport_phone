@@ -25,7 +25,7 @@ class ConfirmOrderActivity : BaseActivity(), View.OnClickListener {
 
     private var pageValue = 0
     private var totalLinen = 0
-    private var linen:String? = null
+    private var linen: String? = null
 
     override fun getLayoutID(): Int {
         return R.layout.activity_confirm_order
@@ -58,10 +58,10 @@ class ConfirmOrderActivity : BaseActivity(), View.OnClickListener {
         tvPrincipal.text = String.format("%s%s", getString(R.string.principal), MyApplication.name)
         if (pageValue == 1) {
             tvLinenTrend.text = String.format("%s%s - %s", getString(R.string.linen_trend_),
-                    MyApplication.retData?.tradition_hotel_name, MyApplication.retData?.wash_name)
+                    MyApplication.retData?.tradition_hotel_name ?: "酒店", MyApplication.retData?.wash_name ?: "洗涤厂")
         } else {
             tvLinenTrend.text = String.format("%s%s - %s", getString(R.string.linen_trend_),
-                    MyApplication.retData?.wash_name, MyApplication.retData?.tradition_hotel_name)
+                    MyApplication.retData?.wash_name ?: "洗涤厂", MyApplication.retData?.tradition_hotel_name ?: "酒店")
         }
     }
 

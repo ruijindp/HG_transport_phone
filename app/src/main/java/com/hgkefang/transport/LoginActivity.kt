@@ -21,7 +21,9 @@ import org.jetbrains.anko.toast
  */
 class LoginActivity : BaseActivity(), View.OnClickListener {
 
-    private lateinit var spUtils: SPUtils
+    private val spUtils: SPUtils by lazy{
+        SPUtils.getInstance(Activity.MODE_PRIVATE)
+    }
 
     override fun getLayoutID(): Int {
         return R.layout.activity_login
@@ -29,7 +31,7 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
 
     override fun initialize(savedInstanceState: Bundle?) {
         hasNeedFitWindow = true
-        spUtils = SPUtils.getInstance(Activity.MODE_PRIVATE)
+
 //        if (!TextUtils.isEmpty(MyApplication.token)) {
 //            startActivity(Intent(this, ScanningActivity::class.java))
 //            finish()

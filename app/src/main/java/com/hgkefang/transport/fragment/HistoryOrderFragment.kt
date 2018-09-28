@@ -20,7 +20,6 @@ import com.blankj.utilcode.util.SPUtils
 import com.blankj.utilcode.util.TimeUtils
 import com.blankj.utilcode.util.ToastUtils
 import com.bronze.kutil.httpPost
-import com.bronze.kutil.log
 import com.google.gson.Gson
 import com.gprinter.command.EscCommand
 import com.hgkefang.transport.BluetoothActivity
@@ -354,7 +353,7 @@ class HistoryOrderFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListene
         esc.addText("订单号：${retData!!.tradition_ordernumber}\n")
         esc.addText("经手人：${MyApplication.name}\n")
         if (!MyApplication.retData?.floor_name.isNullOrEmpty()) {
-            esc.addText(String.format("%s%s", getString(R.string.category_name_), MyApplication.retData?.floor_name))
+            esc.addText(String.format("%s%s\n", getString(R.string.category_name_), MyApplication.retData?.floor_name))
         }
         when (retData?.tradition_order_type) {
             "1" -> esc.addText("布草类型：${getString(R.string.send_linen)}\n")
@@ -363,9 +362,11 @@ class HistoryOrderFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListene
             "4" -> esc.addText("布草类型：${getString(R.string.rewash_linen)}\n")
         }
         if (retData?.tradition_order_type == "1") {
-            esc.addText(String.format("%s%s - %s\n", getString(R.string.linen_trend_), retData!!.tradition_hotel_name, retData!!.tradition_wash_name))
+            esc.addText(String.format("%s%s - %s\n", getString(R.string.linen_trend_),
+                    retData?.tradition_hotel_name ?: "酒店", retData?.tradition_wash_name ?: "洗涤厂"))
         } else {
-            esc.addText(String.format("%s%s - %s\n", getString(R.string.linen_trend_), retData!!.tradition_wash_name, retData!!.tradition_hotel_name))
+            esc.addText(String.format("%s%s - %s\n", getString(R.string.linen_trend_),
+                    retData?.tradition_wash_name ?: "洗涤厂", retData?.tradition_hotel_name ?: "酒店"))
         }
         esc.addSelectPrintModes(EscCommand.FONT.FONTA, EscCommand.ENABLE.OFF, EscCommand.ENABLE.ON, EscCommand.ENABLE.ON, EscCommand.ENABLE.OFF)
         esc.addText("------------------------\n")
