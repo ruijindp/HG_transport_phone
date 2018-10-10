@@ -48,6 +48,7 @@ data class RetData(
         val tradition_transport_id: String,
         val tradition_order_type: String,
         val tradition_wash_name: String,
+        val tradition_floor_name: String?,
 
         val slipper: Int,
 

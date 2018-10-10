@@ -40,7 +40,7 @@ class LinenInfoAdapter(
         with(holder.itemView){
             tvLinenCount.text = String.format("x%s", type[position].split("-")[1])
             for (retData in result) {
-                retData.son.map {
+                retData.son.forEach {
                     if (it.id == type[position].split("-")[0]){
                         tvLinenName.text = String.format("%s-%s", it.tradition_name, it.tradition_spec)
                     }

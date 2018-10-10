@@ -23,6 +23,7 @@ class HotelActivity : BaseActivity(), View.OnClickListener, NamedEntityPopup.Ent
 
     private lateinit var results: ArrayList<RetData>
     private lateinit var popup: NamedEntityPopup
+    private var isSearch = false
 
     override fun getLayoutID(): Int {
         return R.layout.activity_hotel
@@ -33,9 +34,11 @@ class HotelActivity : BaseActivity(), View.OnClickListener, NamedEntityPopup.Ent
         refreshData()
         lnHotel.setOnClickListener(this)
         tvConfirm.setOnClickListener {
+            isSearch = false
             doLogin()
         }
         tvSearch.setOnClickListener {
+            isSearch = true
             refreshData()
         }
     }
@@ -43,12 +46,16 @@ class HotelActivity : BaseActivity(), View.OnClickListener, NamedEntityPopup.Ent
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.lnHotel -> {
-                popup = NamedEntityPopup.create(lnHotel)
-                popup.setEntityPopupSelectListener(this)
-                popup.setEntities(results)
-                popup.showAsDropDown(v)
+                showPopup(v)
             }
         }
+    }
+
+    private fun showPopup(v: View) {
+        popup = NamedEntityPopup.create(lnHotel)
+        popup.setEntityPopupSelectListener(this)
+        popup.setEntities(results)
+        popup.showAsDropDown(v)
     }
 
     override fun selectStringAt(popup: NamedEntityPopup, index: Int) {
@@ -85,6 +92,9 @@ class HotelActivity : BaseActivity(), View.OnClickListener, NamedEntityPopup.Ent
                     return@httpPost
                 }
                 results = it.retData
+                if (isSearch){
+                    showPopup(lnHotel)
+                }
             }
         }
     }

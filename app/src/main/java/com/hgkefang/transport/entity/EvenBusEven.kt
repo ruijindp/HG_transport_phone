@@ -7,8 +7,3 @@ data class EvenBusEven(
         val son: Son,
         var count: Int
 )
-
-data class OrderEvent(
-        val retData: RetData,
-        val position : Int
-)

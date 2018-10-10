@@ -9,8 +9,8 @@ android {
         applicationId "com.hgkefang.transport"
         minSdkVersion 19
         targetSdkVersion 28
-        versionCode 53
-        versionName "5.0.0.4"
+        versionCode 54
+        versionName "5.0.0.5"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

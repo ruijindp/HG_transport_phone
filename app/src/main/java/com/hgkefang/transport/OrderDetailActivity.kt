@@ -78,9 +78,9 @@ class OrderDetailActivity : BaseActivity(), View.OnClickListener {
             "3" -> tvOrderType.text = String.format("%s%s", getString(R.string.order_type), getString(R.string.pollution))
             "4" -> tvOrderType.text = String.format("%s%s", getString(R.string.order_type), getString(R.string.rewash_linen))
         }
-        if (!MyApplication.retData?.floor_name.isNullOrEmpty()) {
+        if (!retData?.tradition_floor_name.isNullOrEmpty()) {
             tvCategory.visibility = View.VISIBLE
-            tvCategory.text = String.format("%s%s", getString(R.string.category_name_), MyApplication.retData?.floor_name)
+            tvCategory.text = String.format("%s%s", getString(R.string.category_name_), retData?.tradition_floor_name)
         }
         tvPrincipal.text = String.format("%s%s", getString(R.string.principal), MyApplication.name)
         if (retData?.tradition_order_type == "1") {
@@ -360,7 +360,7 @@ class OrderDetailActivity : BaseActivity(), View.OnClickListener {
             val sb = StringBuilder()
             totalLinenCount += result.split("-")[1].toInt()
             for (retData in typeResult) {
-                retData.son.map {
+                retData.son.forEach {
                     if (it.id == result.split("-")[0]) {
                         var linenType = "${it.tradition_name}-${it.tradition_spec}"
                         val stringBuilder = StringBuilder(linenType)

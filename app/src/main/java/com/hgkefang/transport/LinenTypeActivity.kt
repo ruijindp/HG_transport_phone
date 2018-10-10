@@ -39,6 +39,7 @@ class LinenTypeActivity : BaseActivity(), View.OnClickListener {
     private val linenResults = ArrayList<RetData>()
     private val shoeResults = ArrayList<RetData>()
     private lateinit var adapter: LinenTypeAdapter1
+    private var body : String?= null
 
     override fun getLayoutID(): Int {
         return R.layout.activity_linen_type
@@ -101,6 +102,7 @@ class LinenTypeActivity : BaseActivity(), View.OnClickListener {
                 "token" to MyApplication.token)
         API_LINEN_TYPE.httpPost(getRequestParams(Gson().toJson(params))) { statusCode, body ->
             Log.i("response_linen", body)
+            this.body = body
             dismissDialog()
             if (statusCode != 200) {
                 toast("网络错误：$statusCode")
@@ -138,6 +140,7 @@ class LinenTypeActivity : BaseActivity(), View.OnClickListener {
                 }
                 Intent(this@LinenTypeActivity, ConfirmOrderActivity::class.java).let {
                     it.putExtra("linen", Gson().toJson(addResult))
+                    it.putExtra("linenBody", body)
                     it.putExtra("pageValue", intent.getIntExtra("pageValue", -1))
                     startActivity(it)
                 }

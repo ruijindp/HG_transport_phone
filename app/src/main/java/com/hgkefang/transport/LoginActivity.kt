@@ -60,6 +60,7 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
         params["account"] = etAccount.text.toString()
         params["password"] = SecretUtil.get32MD5Str(etPassword.text.toString())
         params["sign"] = SecretUtil.get32MD5Str(Gson().toJson(params)).toUpperCase()
+        Log.i("doLogin", params.toString())
         API_LOGIN.httpPost(getRequestParams(Gson().toJson(params))) { statusCode, body ->
             Log.i("doLogin", body)
             dismissDialog()

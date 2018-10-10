@@ -162,6 +162,7 @@ class HistoryOrderFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListene
                 "token" to MyApplication.token)
         API_ORDER.httpPost(getRequestParams(Gson().toJson(params))) { statusCode, body ->
             Log.i("response_order$pageValue", body)
+            isLoading = false
             cancelRefreshAnimation(swipeRefreshLayout)
             if (statusCode != 200) {
                 toast("网络错误：$statusCode")
@@ -382,7 +383,7 @@ class HistoryOrderFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListene
             val sb = StringBuilder()
             totalLinenCount += result.split("-")[1].toInt()
             for (retData in typeResult) {
-                retData.son.map {
+                retData.son.forEach {
                     if (it.id == result.split("-")[0]) {
                         var s = "${it.tradition_name}-${it.tradition_spec}"
                         val stringBuilder = StringBuilder(s)
