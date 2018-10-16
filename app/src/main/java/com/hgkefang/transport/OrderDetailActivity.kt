@@ -1,22 +1,15 @@
 package com.hgkefang.transport
 
-import android.annotation.SuppressLint
 import android.app.Activity
-import android.bluetooth.BluetoothAdapter
-import android.bluetooth.BluetoothDevice
-import android.content.BroadcastReceiver
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
+import android.content.ServiceConnection
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
-import android.text.TextUtils
+import android.os.IBinder
 import android.util.Log
 import android.view.View
-import com.blankj.utilcode.util.SPUtils
 import com.blankj.utilcode.util.TimeUtils
-import com.blankj.utilcode.util.ToastUtils
 import com.bronze.kutil.httpPost
 import com.google.gson.Gson
 import com.gprinter.command.EscCommand
@@ -24,10 +17,10 @@ import com.hgkefang.transport.adapter.LinenInfoAdapter
 import com.hgkefang.transport.app.MyApplication
 import com.hgkefang.transport.entity.CommonResult
 import com.hgkefang.transport.entity.RetData
+import com.hgkefang.transport.fragment.HistoryOrderFragment
 import com.hgkefang.transport.net.API_LINEN_TYPE
+import com.hgkefang.transport.service.PrinterService
 import com.hgkefang.transport.util.DeviceConnFactoryManager
-import com.hgkefang.transport.util.PrinterCommand
-import com.hgkefang.transport.util.ThreadPool
 import com.hgkefang.transport.util.TimeUtil
 import kotlinx.android.synthetic.main.activity_order_detail.*
 import kotlinx.android.synthetic.main.view_title.*
@@ -43,19 +36,8 @@ import kotlin.collections.ArrayList
  */
 class OrderDetailActivity : BaseActivity(), View.OnClickListener {
 
-    private val BLUETOOTH_REQUEST_CODE = 0x001
-    private val CONN_STATE_DISCONNECT = 0x007
-    private val PRINTER_COMMAND_ERROR = 0x008
-    private val ACTION_QUERY_PRINTER_STATE = "action_query_printer_state"
-    private val CONN_STATE_FAILED = CONN_STATE_DISCONNECT shl 2
-    private val CONN_PRINTER = 0x12
-    private val MESSAGE_UPDATE_PARAMETER = 0x009
-    private val MESSAGE_PUT = 0x002
-
-    private val id = 1
-    private var threadPool: ThreadPool? = null
     private var retData: RetData? = null
-    private val spUtils = SPUtils.getInstance(Activity.MODE_PRIVATE)
+    private lateinit var myService: PrinterService
 
     override fun getLayoutID(): Int {
         return R.layout.activity_order_detail
@@ -63,6 +45,7 @@ class OrderDetailActivity : BaseActivity(), View.OnClickListener {
 
     private lateinit var typeList: ArrayList<String>
     override fun initialize(savedInstanceState: Bundle?) {
+        bindService(Intent(this, PrinterService::class.java), serviceConnection, Context.BIND_AUTO_CREATE)
         tvPageTitle.text = getString(R.string.order_detail)
         retData = intent.getSerializableExtra("retData") as RetData
 
@@ -84,9 +67,11 @@ class OrderDetailActivity : BaseActivity(), View.OnClickListener {
         }
         tvPrincipal.text = String.format("%s%s", getString(R.string.principal), MyApplication.name)
         if (retData?.tradition_order_type == "1") {
-            tvLinenTrend.text = String.format("%s%s - %s", getString(R.string.linen_trend_), retData?.tradition_hotel_name ?: "酒店", retData?.tradition_wash_name ?: "洗涤厂")
+            tvLinenTrend.text = String.format("%s%s - %s", getString(R.string.linen_trend_), retData?.tradition_hotel_name
+                    ?: "酒店", retData?.tradition_wash_name ?: "洗涤厂")
         } else {
-            tvLinenTrend.text = String.format("%s%s - %s", getString(R.string.linen_trend_), retData?.tradition_wash_name ?: "洗涤厂", retData?.tradition_hotel_name ?: "酒店")
+            tvLinenTrend.text = String.format("%s%s - %s", getString(R.string.linen_trend_), retData?.tradition_wash_name
+                    ?: "洗涤厂", retData?.tradition_hotel_name ?: "酒店")
         }
         tvOrderNum.text = String.format("%s%s", getString(R.string.order_num), retData!!.tradition_ordernumber)
         tvOrderTime.text = String.format("%s%s", getString(R.string.order_time), TimeUtil.strTime2Date(retData!!.tradition_addtime, "yyyy-MM-dd HH:mm:ss"))
@@ -105,38 +90,23 @@ class OrderDetailActivity : BaseActivity(), View.OnClickListener {
         tvPrinter.setOnClickListener(this)
 
         getLineTypeData()
-
-        if (!MyApplication.hasConnectPrinter)
-            connectBle()
     }
 
-    private fun connectBle() {
-        if (!BluetoothAdapter.getDefaultAdapter().isEnabled) {
-            return
+    private val serviceConnection = object : ServiceConnection {
+        override fun onServiceConnected(name: ComponentName, service: IBinder) {
+            myService = (service as PrinterService.MyBinder).getService()
+            myService.setNotifyPrinterListener(object : PrinterService.NotifyPrinterListener {
+                override fun onNotifyPrinter(state: Int) {
+                    if (state == 1) {
+                        sendReceiptWithResponse()
+                    }
+                }
+            })
         }
-        if (TextUtils.isEmpty(spUtils.getString("macAddress", ""))) {
-            return
-        }
-        Thread(Runnable {
-            Looper.prepare()
-            Handler().post(runnable)
-            Looper.loop()
-        }).start()
-    }
 
-    private val runnable = Runnable {
-        DeviceConnFactoryManager.Build()
-                .setId(id)
-                .setConnMethod(DeviceConnFactoryManager.ConnectType.BLUETOOTH)
-                .setMacAddress(spUtils.getString("macAddress", ""))
-                .build()
-        DeviceConnFactoryManager.deviceConnFactoryManagers[id]!!.openPort()
-        if (!DeviceConnFactoryManager.deviceConnFactoryManagers[id]!!.connState) {
-            ToastUtils.showShort("未找到打印机")
-            runOnUiThread { tvConnectPrinter.text = "连接打印机" }
+        override fun onServiceDisconnected(name: ComponentName) {
         }
     }
-
 
     private lateinit var typeResult: ArrayList<RetData>
     private fun getLineTypeData() {
@@ -170,145 +140,31 @@ class OrderDetailActivity : BaseActivity(), View.OnClickListener {
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.ivPageBack -> finish()
-            R.id.tvConnectPrinter -> {
-                when (tvConnectPrinter.text.toString()) {
-                    "连接打印机" -> bluetoothConnect()
-                    "断开打印机" -> bluetoothDisconnect()
-                }
-            }
             R.id.tvPrinter -> btnReceiptPrint()
-        }
-    }
-
-    override fun onStart() {
-        super.onStart()
-        if (!MyApplication.hasConnectPrinter) {
-            val filter = IntentFilter()
-            filter.addAction(ACTION_QUERY_PRINTER_STATE)
-            filter.addAction(DeviceConnFactoryManager.ACTION_CONN_STATE)
-            registerReceiver(receiver, filter)
         }
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        if (!MyApplication.hasConnectPrinter) {
-            unregisterReceiver(receiver)
-//            DeviceConnFactoryManager.closeAllPort()
-        }
-//        if (threadPool != null) {
-//            threadPool!!.stopThreadPool()
-//        }
+        unbindService(serviceConnection)
     }
 
-    // 打印机蓝牙连接
-    private fun bluetoothConnect() {
-        startActivityForResult(Intent(this@OrderDetailActivity, BluetoothActivity::class.java), BLUETOOTH_REQUEST_CODE)
-    }
-
-    // 打印机断开连接
-    private fun bluetoothDisconnect() {
-        mHandler.obtainMessage(CONN_STATE_DISCONNECT).sendToTarget()
-    }
-
-    private val receiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            val action = intent.action ?: return
-            when (action) {
-                BluetoothDevice.ACTION_ACL_DISCONNECTED -> mHandler.obtainMessage(CONN_STATE_DISCONNECT).sendToTarget()
-                DeviceConnFactoryManager.ACTION_CONN_STATE -> {
-                    val state = intent.getIntExtra(DeviceConnFactoryManager.STATE, -1)
-                    val deviceId = intent.getIntExtra(DeviceConnFactoryManager.DEVICE_ID, -1)
-                    when (state) {
-                        DeviceConnFactoryManager.CONN_STATE_DISCONNECT -> if (id == deviceId) {
-                            ToastUtils.showShort("打印机断开")
-                            tvConnectPrinter.text = "连接打印机"
-                            MyApplication.hasConnectPrinter = false
-                        }
-                        DeviceConnFactoryManager.CONN_STATE_CONNECTING -> {
-                            ToastUtils.showShort("打印机连接中...")
-                            tvConnectPrinter.text = "连接打印机"
-                            MyApplication.hasConnectPrinter = false
-                        }
-                        DeviceConnFactoryManager.CONN_STATE_CONNECTED -> {
-                            ToastUtils.showShort("打印机已连接")
-                            tvConnectPrinter.text = "断开打印机"
-                            mHandler.obtainMessage(MESSAGE_PUT).sendToTarget()
-                            MyApplication.hasConnectPrinter = true
-                        }
-                        CONN_STATE_FAILED -> {
-                            ToastUtils.showShort("打印机连接失败")
-                            tvConnectPrinter.text = "连接打印机"
-                            MyApplication.hasConnectPrinter = false
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    @SuppressLint("HandlerLeak")
-    internal var mHandler: Handler = object : Handler() {
-        override fun handleMessage(msg: android.os.Message) {
-            when (msg.what) {
-                CONN_STATE_DISCONNECT -> if (DeviceConnFactoryManager.deviceConnFactoryManagers[id] != null) {
-                    DeviceConnFactoryManager.deviceConnFactoryManagers[id]!!.closePort(id)
-                }
-                PRINTER_COMMAND_ERROR -> ToastUtils.showShort("请选择正确的打印机指令")
-                CONN_PRINTER -> ToastUtils.showShort("请先连接打印机")
-                MESSAGE_UPDATE_PARAMETER -> {
-                    val strIp = msg.data.getString("Ip")
-                    val strPort = msg.data.getString("Port")
-                    DeviceConnFactoryManager.Build()
-                            .setConnMethod(DeviceConnFactoryManager.ConnectType.WIFI)
-                            .setIp(strIp!!)
-                            .setId(id)
-                            .setPort(Integer.parseInt(strPort!!))
-                            .build()
-                    threadPool = ThreadPool.instantiation
-                    threadPool!!.addTask(Runnable { DeviceConnFactoryManager.deviceConnFactoryManagers[id]!!.openPort() })
-                }
-                MESSAGE_PUT -> if (TextUtils.isEmpty(spUtils.getString("macAddress", ""))) {
-                    spUtils.put("macAddress", macAddress)
-                }
-            }
-        }
-    }
-
-    private var macAddress: String? = null
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
         if (resultCode != Activity.RESULT_OK) {
             return
         }
-        if (requestCode != BLUETOOTH_REQUEST_CODE) {
+        if (requestCode != HistoryOrderFragment.BLUETOOTH_REQUEST_CODE) {
             return
         }
-        macAddress = data!!.getStringExtra("address")
-        DeviceConnFactoryManager.Build()
-                .setId(id)
-                .setConnMethod(DeviceConnFactoryManager.ConnectType.BLUETOOTH)
-                .setMacAddress(macAddress!!)
-                .build()
-        DeviceConnFactoryManager.deviceConnFactoryManagers[id]!!.openPort()
-
-        Handler().postDelayed({ btnReceiptPrint() }, 500)
+        myService.onActivityResult(data!!.getStringExtra("address"))
     }
 
     private fun btnReceiptPrint() {
-        if (DeviceConnFactoryManager.deviceConnFactoryManagers[id] == null || !DeviceConnFactoryManager.deviceConnFactoryManagers[id]!!.connState) {
-            ToastUtils.showShort("请先连接打印机")
-            bluetoothConnect()
+        if (!myService.hasConnectPrinter()) {
+            startActivityForResult(Intent(this, BluetoothActivity::class.java), HistoryOrderFragment.BLUETOOTH_REQUEST_CODE)
             return
         }
-        threadPool = ThreadPool.instantiation
-        threadPool!!.addTask(Runnable {
-            if (DeviceConnFactoryManager.deviceConnFactoryManagers[id]!!.getCurrentPrinterCommand() === PrinterCommand.ESC) {
-                sendReceiptWithResponse()
-            } else {
-                mHandler.obtainMessage(PRINTER_COMMAND_ERROR).sendToTarget()
-            }
-        })
+        myService.doPrinter()
     }
 
     // 打印
@@ -390,6 +246,6 @@ class OrderDetailActivity : BaseActivity(), View.OnClickListener {
         esc.addPrintAndFeedLines(4.toByte())
         esc.addQueryPrinterStatus()
         val data = esc.command
-        DeviceConnFactoryManager.deviceConnFactoryManagers[id]!!.sendDataImmediately(data)
+        DeviceConnFactoryManager.deviceConnFactoryManagers[PrinterService.id]!!.sendDataImmediately(data)
     }
 }

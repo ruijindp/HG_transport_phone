@@ -9,8 +9,8 @@ android {
         applicationId "com.hgkefang.transport"
         minSdkVersion 19
         targetSdkVersion 28
-        versionCode 54
-        versionName "5.0.0.5"
+        versionCode 55
+        versionName "5.0.0.6"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -40,8 +40,8 @@ dependencies {
     implementation 'com.gyf.barlibrary:barlibrary:2.3.0'
     implementation files('libs/gprintersdkv1.jar')
     implementation 'com.afollestad.material-dialogs:core:0.9.6.0'
-    //    implementation 'com.journeyapps:zxing-android-embedded:3.5.0'
     implementation 'com.google.zxing:core:3.3.0'
     implementation project(':kutil')
     implementation 'com.daimajia.numberprogressbar:library:1.4@aar'
+    //    implementation 'com.journeyapps:zxing-android-embedded:3.5.0'
 }

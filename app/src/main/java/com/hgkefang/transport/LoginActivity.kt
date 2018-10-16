@@ -55,12 +55,15 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
     }
 
     private fun doLogin() {
+        if (etAccount.text.toString().isEmpty() or etPassword.text.toString().isEmpty()){
+            toast("请输入账号和密码")
+            return
+        }
         showLoadingDialog()
         val params = LinkedHashMap<String, Any>()
         params["account"] = etAccount.text.toString()
         params["password"] = SecretUtil.get32MD5Str(etPassword.text.toString())
         params["sign"] = SecretUtil.get32MD5Str(Gson().toJson(params)).toUpperCase()
-        Log.i("doLogin", params.toString())
         API_LOGIN.httpPost(getRequestParams(Gson().toJson(params))) { statusCode, body ->
             Log.i("doLogin", body)
             dismissDialog()

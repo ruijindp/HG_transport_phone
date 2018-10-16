@@ -9,6 +9,7 @@ import com.hgkefang.transport.OrderDetailActivity
 import com.hgkefang.transport.R
 import com.hgkefang.transport.app.MyApplication
 import com.hgkefang.transport.entity.RetData
+import com.hgkefang.transport.fragment.HistoryOrderFragment
 import com.hgkefang.transport.util.TimeUtil
 import kotlinx.android.synthetic.main.item_history_order.view.*
 
@@ -17,7 +18,7 @@ import kotlinx.android.synthetic.main.item_history_order.view.*
  * 订单
  */
 class HistoryOrderAdapter(private var result: ArrayList<RetData>,
-                          private var onSelectListener: OnSelectListener) : RecyclerView.Adapter<SimpleHolder>() {
+                          private var onSelectListener: OnSelectListener?) : RecyclerView.Adapter<SimpleHolder>() {
 
     fun setNewData(result: ArrayList<RetData>) {
         this.result = result
@@ -60,7 +61,9 @@ class HistoryOrderAdapter(private var result: ArrayList<RetData>,
                 it.context.startActivity(intent)
             }
             tvPrinterOrder.setOnClickListener {
-                onSelectListener.onPrinter(result[position], position)
+                if (onSelectListener != null) {
+                    onSelectListener!!.onPrinter(retData, position)
+                }
             }
         }
     }
