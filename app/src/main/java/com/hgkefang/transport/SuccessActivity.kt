@@ -38,7 +38,7 @@ class SuccessActivity : BaseActivity() {
     override fun initialize(savedInstanceState: Bundle?) {
         bindService(Intent(this, PrinterService::class.java), serviceConnection, Context.BIND_AUTO_CREATE)
         pageValue = intent.getIntExtra("pageValue", -1)
-        linenResult = Gson().fromJson<EvenBusEven>(intent.getStringExtra("linen"), object : TypeToken<List<EvenBusEven>>() {}.type) as ArrayList<EvenBusEven>
+        linenResult = Gson().fromJson<List<EvenBusEven>>(intent.getStringExtra("linen"), object : TypeToken<List<EvenBusEven>>() {}.type) as ArrayList<EvenBusEven>
         tvLinenCount.text = String.format(getString(R.string.commit_count), intent.getIntExtra("totalLinen", -1))
         tvBackMain.setOnClickListener {
             val intent = Intent(this@SuccessActivity, MainActivity::class.java)

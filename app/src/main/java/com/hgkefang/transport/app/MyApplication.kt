@@ -12,11 +12,9 @@ class MyApplication : Application() {
 
     companion object {
         var token: String? = null
-        //        const val hotel_id = 7
         var name: String? = null
         var context: Context by Delegates.notNull()
         var retData: RetData? = null
-        var hasConnectPrinter = false
     }
 
     override fun onCreate() {

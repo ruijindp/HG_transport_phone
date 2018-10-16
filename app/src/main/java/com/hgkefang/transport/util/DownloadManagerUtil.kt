@@ -30,7 +30,7 @@ class DownloadManagerUtil(private val context: Context) {
         val uri = Uri.parse(url)
         val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
         val request = DownloadManager.Request(uri)
-        request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI)
+//        request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI)//默认wifi和4G都可以
         request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)
         request.setAllowedOverRoaming(false)
         request.setVisibleInDownloadsUi(true)
